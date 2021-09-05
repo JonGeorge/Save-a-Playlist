@@ -1,4 +1,4 @@
-const searchInput = document.getElementById("search");
+const searchInput = document.getElementById("search-input");
 
 /**
  * Executes AJAX api call to fetch search results.
@@ -10,6 +10,7 @@ function search(query) {
    return fetch(`/search?q=${query}&typeahead=true`)
     .then(res => res.json())
     .then(data => {
+        // LOG DATA FOR TESTING
         console.log(data);
         return data;
     })
@@ -30,7 +31,7 @@ searchInput.addEventListener("keyup", (event) => {
     if(searchStrNoWhiteSpace.length >= minimumCharsForTypeahead) {
         search(input)
         .then(response => {
-            // console.log(response); // TODO: Handle repsonse with search results
+            console.log(response); // TODO: Handle repsonse with search results
             const playlists = response.playlists.items;
             displayPlaylistResults(playlists);
         })
@@ -47,37 +48,49 @@ searchInput.addEventListener("keyup", (event) => {
 });
 
 function displayPlaylistResults(playlists) {
-    const ol = document.createElement("ol");
+    const ul = document.createElement("ul");
 
     for(let i = 0; i < playlists.length; i++) {
         const addBtn = getAddBtn(playlists[i]);
 
+        const img = document.createElement("img");
+        img.setAttribute("src", playlists[i].images[0].url);
+        img.setAttribute("class", "playlist-img");
+
+        const p = document.createElement("p");
+        p.setAttribute("class", "playlist-info");
+        p.textContent = playlists[i].name;
+
+
          const li = document.createElement("li");
+         li.appendChild(img);
+         li.append(p);
          li.appendChild(addBtn);
-         li.append(playlists[i].name);
-         ol.appendChild(li);
+         ul.appendChild(li);
     }
 
     const body = document.getElementById("body");
 
     const newResultsDiv = document.createElement("div");
-    newResultsDiv.setAttribute("id", "result");
-    newResultsDiv.appendChild(ol); // add list to new results div
+    newResultsDiv.setAttribute("id", "search-results");
+    newResultsDiv.appendChild(ul); // add list to new results div
 
-    const currentResultsDiv  = document.getElementById("result");
-    body.replaceChild(newResultsDiv, currentResultsDiv); // replace results div
+    const currentResultsDiv = document.getElementById("search-results");
+    const resultsParentDiv  = currentResultsDiv.parentNode;
+    resultsParentDiv.replaceChild(newResultsDiv, currentResultsDiv); // replace results div
 }
 
 function clearPlaylistResults() {
-    const results = document.getElementById("result");
+    const results = document.getElementById("search-results");
     if(results.firstElementChild) {
         results.removeChild(results.firstElementChild);
     }
 }
 
 function getAddBtn(playlist) {
-    const addBtn = document.createElement("button");
-    addBtn.innerText = " + ";
+    const addBtn = document.createElement("div");
+    addBtn.innerText = " + \n add";
+    addBtn.setAttribute("class", "add-btn");
 
     // const playlistId = playlist.id;
     // const playlistId = playlist.tracks.href;

@@ -4,7 +4,7 @@ const path    = require("path");
 const log   = require("../services/log");
 
 router.get("/", (req, res) => {
-    const file = path.join(__dirname, "../public", "index.html");
+    const file = path.join(__dirname, "../public", "index_wip.html");
 
     if(req.session.count) req.session.count++;
     else req.session.count = 1;

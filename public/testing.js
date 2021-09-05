@@ -7,14 +7,14 @@ function addEventListeners() {
 
         var pollTimer   =   window.setInterval(function() { 
             try {
-                console.log(newWindow.document.URL);
+                // console.log(newWindow.document.URL);
                 if (newWindow.document.URL.indexOf("/success") != -1) {
                     window.clearInterval(pollTimer);
                     var url =   newWindow.document.URL;
                     newWindow.close();
                 }
             } catch(e) {
-                console.error(e);
+                // console.error(e);
             }
         }, 100);
     }

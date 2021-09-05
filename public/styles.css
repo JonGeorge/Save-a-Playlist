@@ -1,0 +1,94 @@
+body {
+    background-color: white;
+    font-family: europa, sans-serif;
+    max-width: 1200px;
+    min-width: 380px;
+    padding: 35px 150px;
+    margin: 0 auto;
+}
+
+header {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+header span {
+    position: relative;
+    bottom: 15px;
+}
+
+header .right-header {
+    float: right;
+    display: inline-block;
+}
+
+.playlist-icon {
+    color: black;
+    width: 35px;
+}
+
+#login {
+    background-color: #5bc057;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    padding: 12px 22px;
+    position: relative;
+    top: 12px;
+
+}
+
+.main-content {
+    text-align: center;
+}
+
+#search-input {
+    width: 70%;
+    border: none;
+    border-bottom: 1px solid black;
+    padding: 11px;
+    font-family: 'europa', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 75px;
+    outline: none;
+}
+
+#search-results {
+    text-align: left;
+
+}
+
+#search-results > ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#search-results > ul > li {
+    border-bottom: 1px solid #DBDBDB;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+}
+
+.playlist-img {
+    width:  175px;
+    margin-right: 35px;
+}
+
+.playlist-info {
+    display: inline-block;
+    position: absolute;
+    margin: 0;
+    width: 41%;
+}
+
+.add-btn {
+    cursor: pointer;
+    width: 45px;
+    display: inline-block;
+    float: right;
+    padding: 0 42px;
+    position: relative;
+    top: 60px;
+    text-align: center;
+}

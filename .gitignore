@@ -2,6 +2,7 @@
 scripts/
 *.code-workspace
 .idea/
+*.xd
 
 # Logs
 logs
