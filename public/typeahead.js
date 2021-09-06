@@ -17,6 +17,33 @@ function search(query) {
     .catch(err => console.error(err));
 }
 
+/**
+ * Attempt search after a 750 millisecond delay to allow time
+ * for typing the full input. If we attempt an additional search
+ * before the delay, cancel the timeout and create a new timeout
+ * callback to execute the search.
+ *
+ * @param {string} input Value to search
+ */
+let delay = 0;
+function attemptSearch(input) {
+    if(delay) clearTimeout(delay);
+
+    delay = setTimeout(() => {
+        search(input)
+            .then(response => {
+                // console.log(response); // TODO: Handle repsonse with search results
+                const playlists = response.playlists.items;
+                displayPlaylistResults(playlists);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }, 750);
+}
+
+
+
 let oldInputValue = "";
 searchInput.addEventListener("keyup", (event) => {
     const input = searchInput.value;
@@ -29,15 +56,7 @@ searchInput.addEventListener("keyup", (event) => {
     if(searchStrNoWhiteSpace === oldInputValue) return;
     
     if(searchStrNoWhiteSpace.length >= minimumCharsForTypeahead) {
-        search(input)
-        .then(response => {
-            console.log(response); // TODO: Handle repsonse with search results
-            const playlists = response.playlists.items;
-            displayPlaylistResults(playlists);
-        })
-        .catch(error => {
-            console.error(error);
-        });
+        attemptSearch(input);
     }
 
     if (searchStrNoWhiteSpace.length < minimumCharsForTypeahead) {
@@ -89,7 +108,16 @@ function clearPlaylistResults() {
 
 function getAddBtn(playlist) {
     const addBtn = document.createElement("div");
-    addBtn.innerText = " + \n add";
+    const addBtnPlus = document.createElement("span");
+    addBtnPlus.setAttribute("class", "plus");
+    addBtnPlus.innerText = "+\n";
+
+    const addBtnSave = document.createElement("span");
+    addBtnSave.setAttribute("class", "save");
+    addBtnSave.innerText = "SAVE";
+
+    addBtn.appendChild(addBtnPlus);
+    addBtn.appendChild(addBtnSave);
     addBtn.setAttribute("class", "add-btn");
 
     // const playlistId = playlist.id;
