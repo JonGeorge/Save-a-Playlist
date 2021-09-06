@@ -13,18 +13,21 @@
 
 <body id="body">
 <header>
-    <img class="playlist-icon" src="/static/resources/playlist-add-black.svg" alt="Add a playlist icon">
-    <span>SAVE A PLAYLIST</span>
-
+    <div class="left-header">
+        <img class="playlist-icon" src="/static/resources/playlist-add-green.svg" alt="Add a playlist icon">
+        <span>SAVE A PLAYLIST</span>
+    </div>
     <div class="right-header">
         <a id="login"><strong>Connect to Spotify</strong></a>
     </div>
 </header>
 
-
-<br>
-
-<div class="main-content">
+<main class="main-content">
+    <h1>Never lose a playlist again.</h1>
+<!--    <h3>Connect to Spotify.&nbsp;&nbsp;&nbsp;Search for a playlist.&nbsp;&nbsp;&nbsp;Click <span class="plus">+</span> to save it. </h3>-->
+<!--    <h3>Search for a playlist.&nbsp;&nbsp;&nbsp;Click <span class="plus">+</span> to save it. </h3>-->
+    <h3>Search for a playlist then click <span class="plus">+</span> to save it to your Spotify account. </h3>
+<!--    <h3>Search for a playlist and click the <span class="plus">+</span> to add it as a personal playlist on your Spotify account. </h3>-->
     <form action="/search">
         <label for="search-input" style="display: none">Search</label>
         <input type="text" id="search-input" name="q" placeholder="Type the name of a Spotify playlist here"/>
@@ -32,7 +35,18 @@
         <!--        <input type="submit" value="Search"/>-->
     </form>
     <div id="search-results"></div>
-</div>
+</main>
 </body>
 <script src="/static/typeahead.js"></script>
 <script src="/static/testing.js"></script>
+<script type="text/javascript">
+    // Disable enter key on input text fields
+    window.addEventListener('keydown',function(e) {
+            if(e.keyIdentifier === 'U+000A' || e.keyIdentifier === 'Enter' || e.keyCode === 13) {
+                if(e.target.nodeName === 'INPUT' && e.target.type === 'text') {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        },true);
+</script>

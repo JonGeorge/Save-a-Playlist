@@ -17,6 +17,11 @@ header span {
     bottom: 15px;
 }
 
+header .left-header {
+    color: #5bc057;
+    display: inline-block;
+}
+
 header .right-header {
     float: right;
     display: inline-block;
@@ -42,15 +47,31 @@ header .right-header {
     text-align: center;
 }
 
+.main-content h1, h3 {
+    font-weight: normal;
+}
+
+h1 {
+    margin-top: 80px;
+}
+
+h3 {
+    margin-top: 40px;
+}
+
 #search-input {
     width: 70%;
     border: none;
     border-bottom: 1px solid black;
-    padding: 11px;
+    padding: 11px 0;
     font-family: 'europa', sans-serif;
     font-size: 1rem;
+    margin-top: 36px;
     margin-bottom: 75px;
     outline: none;
+    background-image: url("/static/resources/search.svg");
+    background-repeat: no-repeat;
+    background-position: 99% 10px;
 }
 
 #search-results {
@@ -91,4 +112,17 @@ header .right-header {
     position: relative;
     top: 60px;
     text-align: center;
+}
+
+.plus {
+    font-size: 36px;
+    line-height: 0;
+    color: #5bc057;
+    position: relative;
+    top: 2px;
+}
+
+.save {
+    font-size: 12px;
+    color: #5bc057;
 }
