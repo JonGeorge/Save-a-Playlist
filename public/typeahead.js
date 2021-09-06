@@ -11,39 +11,49 @@ function search(query) {
     .then(res => res.json())
     .then(data => {
         // LOG DATA FOR TESTING
-        console.log(data);
+        // console.log(data);
         return data;
     })
     .catch(err => console.error(err));
 }
 
 /**
- * Attempt search after a 750 millisecond delay to allow time
- * for typing the full input. If we attempt an additional search
- * before the delay, cancel the timeout and create a new timeout
- * callback to execute the search.
+ * Executes a function after a delay. If the
+ * returned function is called again before
+ * the delay timeout, the timeout is canceled
+ * and a new one is created.
  *
- * @param {string} input Value to search
+ * @param {function} fn Function to call
+ * @param {number} delay Milliseconds to wait
+ * before executing the function
+ *
+ * @return {function} Function to clear and set Timeout
  */
-let delay = 0;
-function attemptSearch(input) {
-    if(delay) clearTimeout(delay);
+function debounce(fn, delay) {
+    let timer = 0;
 
-    delay = setTimeout(() => {
-        search(input)
-            .then(response => {
-                // console.log(response); // TODO: Handle repsonse with search results
-                const playlists = response.playlists.items;
-                displayPlaylistResults(playlists);
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, 750);
+    return function() {
+        if(timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn(arguments[0]);
+        }, delay);
+    };
+}
+
+function searchAndDisplayResults(input) {
+    search(input)
+        .then(response => {
+            // console.log(response); // TODO: Handle repsonse with search results
+            const playlists = response.playlists.items;
+            displayPlaylistResults(playlists);
+        })
+        .catch(error => {
+            console.error(error);
+        });
 }
 
 
-
+const debounceSearch = debounce(searchAndDisplayResults, 750);
 let oldInputValue = "";
 searchInput.addEventListener("keyup", (event) => {
     const input = searchInput.value;
@@ -56,7 +66,7 @@ searchInput.addEventListener("keyup", (event) => {
     if(searchStrNoWhiteSpace === oldInputValue) return;
     
     if(searchStrNoWhiteSpace.length >= minimumCharsForTypeahead) {
-        attemptSearch(input);
+        debounceSearch(input);
     }
 
     if (searchStrNoWhiteSpace.length < minimumCharsForTypeahead) {
@@ -110,11 +120,11 @@ function getAddBtn(playlist) {
     const addBtn = document.createElement("div");
     const addBtnPlus = document.createElement("span");
     addBtnPlus.setAttribute("class", "plus");
-    addBtnPlus.innerText = "+\n";
+    addBtnPlus.textContent = "+\n";
 
     const addBtnSave = document.createElement("span");
     addBtnSave.setAttribute("class", "save");
-    addBtnSave.innerText = "SAVE";
+    addBtnSave.textContent = "SAVE";
 
     addBtn.appendChild(addBtnPlus);
     addBtn.appendChild(addBtnSave);
