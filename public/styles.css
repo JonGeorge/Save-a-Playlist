@@ -87,6 +87,7 @@ h3 {
 
 #search-results > ul > li {
     border-bottom: 1px solid #DBDBDB;
+    display: flex;
     margin-bottom: 30px;
     padding-bottom: 30px;
 }
@@ -98,19 +99,17 @@ h3 {
 
 .playlist-info {
     display: inline-block;
-    position: absolute;
+    flex-grow: 1;
     margin: 0;
     width: 41%;
 }
 
 .add-btn {
+    align-self: center;
     cursor: pointer;
     width: 45px;
-    display: inline-block;
     float: right;
     padding: 0 42px;
-    position: relative;
-    top: 60px;
     text-align: center;
 }
 
