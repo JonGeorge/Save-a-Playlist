@@ -1,13 +1,14 @@
 const router = require("express").Router();
-const path    = require("path");
+const path   = require("path");
 
 const log   = require("../services/log");
 
 router.get("/", (req, res) => {
+    // console.log(req);
     const file = path.join(__dirname, "../public", "index_wip.html");
 
-    if(req.session.count) req.session.count++;
-    else req.session.count = 1;
+    if(!req.session.isLoggedIn)
+        req.session.isLoggedIn = false;
 
     log.debug("GET /  ->", `res.sendFile ${file}`);
     res.sendFile(file);
@@ -19,6 +20,8 @@ router.get("/error", (req, res) => {
 });
 
 router.get("/success", (req, res) => {
+    req.session.isLoggedIn = true;
+
     res.send("Success");
 });
 

@@ -9,7 +9,10 @@ function openLoginWindow(url) {
             // console.log(newWindow.document.URL);
             if (newWindow.document.URL.indexOf("/success") !== -1) {
                 window.clearInterval(pollTimer);
-                var url =   newWindow.document.URL;
+
+                window.config.isLoggedIn = true;
+
+                // var url =   newWindow.document.URL;
                 newWindow.close();
             }
         } catch(e) {

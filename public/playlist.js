@@ -195,6 +195,11 @@ function getAddBtn(playlist) {
     // const playlistId = playlist.tracks.href;
     
     addBtn.addEventListener("click", event => {
+        if(!window.config.isLoggedIn) {
+            alert("Click the 'Connect to Spotify' button so we can save this playlist.");
+            return;
+        }
+
         addPlaylist(playlist)
         .then(response => {
             console.log(response);

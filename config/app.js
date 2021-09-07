@@ -7,7 +7,7 @@ const { Pool }  = require("pg"),
 
 module.exports = ({
     // Redirect all routes to under construction page
-    underConstruction: true,
+    underConstruction: false,
 
     // Enable verbose logging
     debug:          process.env.DEBUG,

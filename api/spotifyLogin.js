@@ -60,6 +60,8 @@ router.get("/callback", (req, res) => {
         log.debug("GET /callback -> Writing tokens to session");
         req.session.tokens = tokens;
 
+        req.session.isLoggedIn = true;
+
         log.debug(`GET /login -> Redirecting to ${successRedirectTo}`);
         res.redirect(successRedirectTo);
     })
