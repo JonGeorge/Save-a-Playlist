@@ -15,10 +15,13 @@
 function debounce(fn, delay) {
     let timer = 0;
 
-    return function() {
+    return function(input, onlyClearTimeout) {
         if(timer) clearTimeout(timer);
+
+        if(onlyClearTimeout) return;
+
         timer = setTimeout(() => {
-            fn(arguments[0]);
+            fn(input);
         }, delay);
     };
 }
@@ -68,6 +71,7 @@ function handleSearchEvent(input) {
     }
 
     if (searchStrNoWhiteSpace.length < minimumCharsForTypeahead) {
+        debounceSearch(null, true);
         clearPlaylistResults();
     }
 
