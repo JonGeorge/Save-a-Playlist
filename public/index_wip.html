@@ -38,15 +38,5 @@
 </main>
 </body>
 <script src="/static/typeahead.js"></script>
-<script src="/static/testing.js"></script>
-<script type="text/javascript">
-    // Disable enter key on input text fields
-    window.addEventListener('keydown',function(e) {
-            if(e.keyIdentifier === 'U+000A' || e.keyIdentifier === 'Enter' || e.keyCode === 13) {
-                if(e.target.nodeName === 'INPUT' && e.target.type === 'text') {
-                    e.preventDefault();
-                    return false;
-                }
-            }
-        },true);
-</script>
+<script src="/static/login.js"></script>
+<script src="/static/addEventListeners.js"></script>

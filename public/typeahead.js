@@ -1,21 +1,4 @@
-const searchInput = document.getElementById("search-input");
 
-/**
- * Executes AJAX api call to fetch search results.
- * 
- * @param {string} query passed to Spotify for searching.
- * @returns Promise containing search results in the response.
- */
-function search(query) {
-   return fetch(`/search?q=${query}&typeahead=true`)
-    .then(res => res.json())
-    .then(data => {
-        // LOG DATA FOR TESTING
-        // console.log(data);
-        return data;
-    })
-    .catch(err => console.error(err));
-}
 
 /**
  * Executes a function after a delay. If the
@@ -40,6 +23,23 @@ function debounce(fn, delay) {
     };
 }
 
+/**
+ * Executes AJAX api call to fetch search results.
+ * 
+ * @param {string} query passed to Spotify for searching.
+ * @returns Promise containing search results in the response.
+ */
+function search(query) {
+   return fetch(`/search?q=${query}&typeahead=true`)
+    .then(res => res.json())
+    .then(data => {
+        // LOG DATA FOR TESTING
+        // console.log(data);
+        return data;
+    })
+    .catch(err => console.error(err));
+}
+
 function searchAndDisplayResults(input) {
     search(input)
         .then(response => {
@@ -52,19 +52,17 @@ function searchAndDisplayResults(input) {
         });
 }
 
-
 const debounceSearch = debounce(searchAndDisplayResults, 750);
 let oldInputValue = "";
-searchInput.addEventListener("keyup", (event) => {
-    const input = searchInput.value;
-
+function handleSearchEvent(input) {
     const searchStrNoWhiteSpace = input.replace(/ /g, "").toLowerCase();
 
     const { minimumCharsForTypeahead } = window.config;
-    
-    // New input is equivalent to old value
-    if(searchStrNoWhiteSpace === oldInputValue) return;
-    
+
+    if(searchStrNoWhiteSpace === oldInputValue) {
+        return;
+    }
+
     if(searchStrNoWhiteSpace.length >= minimumCharsForTypeahead) {
         debounceSearch(input);
     }
@@ -72,9 +70,23 @@ searchInput.addEventListener("keyup", (event) => {
     if (searchStrNoWhiteSpace.length < minimumCharsForTypeahead) {
         clearPlaylistResults();
     }
-    
+
     oldInputValue = searchStrNoWhiteSpace;
-});
+}
+
+function getPlaylistImageElement(url) {
+    document.createElement("img");
+    img.setAttribute("src", url);
+    img.setAttribute("class", "playlist-img");
+    return img;
+}
+
+function getPlaylistInfoElement(playlist) {
+    document.createElement("p");
+    p.setAttribute("class", "playlist-info");
+    p.textContent = playlist.name;
+    return p;
+}
 
 function displayPlaylistResults(playlists) {
     const ul = document.createElement("ul");
@@ -82,14 +94,9 @@ function displayPlaylistResults(playlists) {
     for(let i = 0; i < playlists.length; i++) {
         const addBtn = getAddBtn(playlists[i]);
 
-        const img = document.createElement("img");
-        img.setAttribute("src", playlists[i].images[0].url);
-        img.setAttribute("class", "playlist-img");
+        const img = getPlaylistImageElement(playlists[i].images[0].url);
 
-        const p = document.createElement("p");
-        p.setAttribute("class", "playlist-info");
-        p.textContent = playlists[i].name;
-
+        const p = getPlaylistInfoElement(playlists[i].name);
 
          const li = document.createElement("li");
          li.appendChild(img);
@@ -97,8 +104,6 @@ function displayPlaylistResults(playlists) {
          li.appendChild(addBtn);
          ul.appendChild(li);
     }
-
-    const body = document.getElementById("body");
 
     const newResultsDiv = document.createElement("div");
     newResultsDiv.setAttribute("id", "search-results");
