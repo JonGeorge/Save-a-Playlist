@@ -75,14 +75,14 @@ function handleSearchEvent(input) {
 }
 
 function getPlaylistImageElement(url) {
-    document.createElement("img");
+    const img = document.createElement("img");
     img.setAttribute("src", url);
     img.setAttribute("class", "playlist-img");
     return img;
 }
 
 function getPlaylistInfoElement(playlist) {
-    document.createElement("p");
+    const p = document.createElement("p");
     p.setAttribute("class", "playlist-info");
     p.textContent = playlist.name;
     return p;
@@ -96,7 +96,7 @@ function displayPlaylistResults(playlists) {
 
         const img = getPlaylistImageElement(playlists[i].images[0].url);
 
-        const p = getPlaylistInfoElement(playlists[i].name);
+        const p = getPlaylistInfoElement(playlists[i]);
 
          const li = document.createElement("li");
          li.appendChild(img);
