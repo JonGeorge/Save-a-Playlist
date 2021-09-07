@@ -24,8 +24,16 @@ const bodyParser = require("body-parser"),
       express    = require("express"),
       app        = express();
 
-// Using helmet to be safe
+// Append content security policy to allow Spotify images
+let csp = helmet.contentSecurityPolicy.getDefaultDirectives();
+csp["img-src"].push("https://*.scdn.co/");
+csp["img-src"].push("https://*.spotifycdn.com");
+
 app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+    useDefaults: true,
+    directives: csp,
+}));
 
 // Using session initialized in app config
 app.use(config.session);
