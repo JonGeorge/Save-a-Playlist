@@ -93,6 +93,7 @@ h3 {
 }
 
 .playlist-img {
+    align-self: flex-start;
     width:  175px;
     margin-right: 35px;
 }
