@@ -1,9 +1,5 @@
 function addEventListeners() {
 
-    document.getElementById("login").addEventListener("click", event => {
-        openLoginWindow("/login");
-    });
-
     document.getElementById("search-input").addEventListener("keyup", event => {
         const input = event.target.value;
         handleSearchEvent(input);
