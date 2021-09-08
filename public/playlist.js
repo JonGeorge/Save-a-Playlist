@@ -113,7 +113,7 @@ function handleSearchEvent(input) {
 function searchAndDisplayResults(input) {
     search(input)
         .then(response => {
-            // console.log(response); // TODO: Handle repsonse with search results
+            console.log(response); // TODO: Handle repsonse with search results
             const playlists = response.playlists.items;
             displayPlaylistResults(playlists);
         })
@@ -135,20 +135,20 @@ function displayPlaylistResults(playlists) {
     const ul = document.createElement("ul");
 
     for(let i = 0; i < playlists.length; i++) {
-        const img    = getPlaylistImageElement(playlists[i].images[0].url),
-              p      = getPlaylistInfoElement(playlists[i]),
+        const image  = getPlaylistImageElement(playlists[i]),
+              title  = getPlaylistInfoElement(playlists[i]),
               addBtn = getAddBtn(playlists[i]),
-              li     = getResultListElement(img, p, addBtn);
+              li     = getResultListElement(image, title, addBtn);
 
         ul.appendChild(li);
     }
     replaceResultsDiv(ul);
 }
 
-function getResultListElement(img, p, button) {
+function getResultListElement(img, title, button) {
     const li = document.createElement("li");
     li.appendChild(img);
-    li.append(p);
+    li.append(title);
     li.appendChild(button);
     return li;
 }
@@ -163,18 +163,34 @@ function replaceResultsDiv(ul) {
     resultsParentDiv.replaceChild(newResultsDiv, currentResultsDiv);
 }
 
-function getPlaylistImageElement(url) {
+function getPlaylistImageElement(playlist) {
+    const a = document.createElement("a");
+    a.setAttribute("href", playlist.external_urls.spotify);
+    a.setAttribute("target", "_blank");
+    a.setAttribute("rel", "noreferrer noopener");
+
     const img = document.createElement("img");
-    img.setAttribute("src", url);
+    img.setAttribute("src", playlist.images[0].url);
     img.setAttribute("class", "playlist-img");
-    return img;
+
+    a.appendChild(img);
+    return a;
 }
 
 function getPlaylistInfoElement(playlist) {
-    const p = document.createElement("p");
-    p.setAttribute("class", "playlist-info");
-    p.textContent = playlist.name;
-    return p;
+    const div = document.createElement("div");
+    div.setAttribute("class", "playlist-info-container");
+
+    const a = document.createElement("a");
+    a.setAttribute("href", playlist.external_urls.spotify);
+    a.setAttribute("class", "playlist-info-text");
+    a.setAttribute("target", "_blank");
+    a.setAttribute("rel", "noreferrer noopener");
+    a.textContent = playlist.name;
+
+    div.appendChild(a);
+
+    return div;
 }
 
 function getAddBtn(playlist) {

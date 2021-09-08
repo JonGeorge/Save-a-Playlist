@@ -12,7 +12,7 @@ header {
     font-weight: 700;
 }
 
-header span {
+header a > span {
     position: relative;
     bottom: 15px;
 }
@@ -32,6 +32,11 @@ header .right-header {
     width: 35px;
 }
 
+.logo {
+    color: inherit;
+    text-decoration: none;
+}
+
 #login {
     background-color: #5bc057;
     border-radius: 10px;
@@ -40,7 +45,17 @@ header .right-header {
     padding: 12px 22px;
     position: relative;
     top: 12px;
+}
 
+.connected-text {
+    position: relative;
+    top: 6px;
+    color: #5bc057;
+}
+
+.checkmark{
+    position: absolute;
+    right: 162px;
 }
 
 .main-content {
@@ -98,11 +113,13 @@ h3 {
     margin-right: 35px;
 }
 
-.playlist-info {
-    display: inline-block;
+.playlist-info-container {
     flex-grow: 1;
-    margin: 0;
-    width: 41%;
+}
+
+.playlist-info-text {
+    text-decoration: none;
+    color: inherit;
 }
 
 .add-btn {
