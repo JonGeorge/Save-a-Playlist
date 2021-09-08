@@ -45,6 +45,7 @@ header .right-header {
     padding: 12px 22px;
     position: relative;
     top: 12px;
+    text-decoration: none;
 }
 
 .connected-text {
