@@ -1,16 +1,19 @@
 # Save a playlist
 
-Saveaplaylist.com allows you to take a snapshot of Spotify playlists so that it
-persists through playlist updates.
+Saveaplaylist.com allows you to take a snapshot of Spotify playlists.
 
 ## Background
 
-Spotify does not allow you to save a playlist without being subject to
-playlist updates. In addition, the ability to go back in time and
-view/listen to prior versions of a playlist does not exist.
+Many Spotify users have expressed interest in the ability 
+to opt-out of playlist updates, however, this is not a feature Spotify 
+offers. What does this mean? A playlist you've had on repeat for the last 
+two weeks can be changed at any time at the discretion of the playlist owner. 
+Sometimes having songs removed from or added to a playlist is refreshing; or 
+a change in the order of your playlists' songs is welcomed. For the times when 
+those changes are not welcomed, you can use saveaplaylist.com to capture the 
+current state of a playlist for future enjoyment.
 
-Some playlists are perfect the way they are, and updates are
-unwelcome.
+Some playlists are perfect the way they are!
 
 ## How it works
 
