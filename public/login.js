@@ -21,7 +21,6 @@
 
         const a = document.createElement("a");
         a.setAttribute("id", "login");
-        a.setAttribute("href", "javascript:void(0);");
         a.appendChild(strong);
 
         a.addEventListener("click", event => {
