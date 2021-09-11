@@ -1,10 +1,74 @@
-displayConnectToSpotifyButton();
+(function displayConnectToSpotifyButton() {
 
-function displayConnectToSpotifyButton() {
+    const getCheckIcon = function() {
+        const checkIcon = document.createElement("img");
+        checkIcon.setAttribute("src", "/static/resources/check-mark-green.svg");
+        checkIcon.setAttribute("class", "checkmark");
+
+        return checkIcon;
+    };
+
+    const getSpan = function(txt) {
+        const span       = document.createElement("span");
+        span.textContent = txt;
+
+        return span;
+    };
+
+    const getConnectToSpotifyBtn = function() {
+        const strong       = document.createElement("strong");
+        strong.textContent = "Connect to Spotify";
+
+        const a = document.createElement("a");
+        a.setAttribute("id", "login");
+        a.setAttribute("href", "javascript:void(0);");
+        a.appendChild(strong);
+
+        a.addEventListener("click", event => {
+            openLoginWindow("/login");
+        });
+
+        return a;
+    };
+
+    const getConnectedStatusElement = function(element1, element2) {
+        const div = document.createElement("div");
+        div.setAttribute("class", "connected-text");
+        div.appendChild(element1);
+        div.appendChild(element2);
+
+        return div;
+    };
+
+    const openLoginWindow = function(url) {
+        const newWindow = window.open(url, "Spotify Login", "toolbar=no, menubar=no, status=no, directories=no, height=750, width=600");
+        if(window.focus) {
+            newWindow.focus();
+        }
+
+        const pollTimer = window.setInterval(function() {
+            try {
+                // console.log(newWindow.document.URL);
+                if(newWindow.document.URL.indexOf("/success") !== -1) {
+                    window.clearInterval(pollTimer);
+
+                    window.config.isLoggedIn = true;
+                    displayConnectToSpotifyButton();
+
+                    // var url =   newWindow.document.URL;
+                    newWindow.close();
+                }
+            }
+            catch(e) {
+                // console.error(e);
+            }
+        }, 100);
+    };
+
     if(window.config) {
         if(window.config.isLoggedIn) {
-            const checkIcon = getCheckIcon(),
-                  span = getSpan("Connected to Spotify"),
+            const checkIcon             = getCheckIcon(),
+                  span                  = getSpan("Connected to Spotify"),
                   connectedToSpotifyDiv = getConnectedStatusElement(checkIcon, span);
 
             // If 'Connect to Spotify' button is on the page,
@@ -25,72 +89,12 @@ function displayConnectToSpotifyButton() {
         }
         // Current session is not logged in
         else {
-            const strong = document.createElement("strong");
-            strong.textContent = "Connect to Spotify";
-
-            const a = document.createElement("a");
-            a.setAttribute("id", "login");
-            a.setAttribute("href", "javascript:void(0);");
-            a.appendChild(strong);
-
-            a.addEventListener("click", event => {
-                openLoginWindow("/login");
-            });
-
             const rightHeader = document.getElementsByClassName("right-header")[0];
-            rightHeader.appendChild(a);
+            rightHeader.appendChild(getConnectToSpotifyBtn());
         }
     }
     // Config hasn't loaded yet
     else {
         setTimeout(displayConnectToSpotifyButton, 50);
     }
-}
-
-function getCheckIcon() {
-    const checkIcon = document.createElement("img");
-    checkIcon.setAttribute("src", "/static/resources/check-mark-green.svg");
-    checkIcon.setAttribute("class", "checkmark");
-
-    return checkIcon;
-}
-
-function getSpan(txt) {
-    const span = document.createElement("span");
-    span.textContent = txt;
-
-    return span;
-}
-
-function getConnectedStatusElement(element1, element2) {
-    const div = document.createElement("div");
-    div.setAttribute("class", "connected-text");
-    div.appendChild(element1);
-    div.appendChild(element2);
-
-    return div;
-}
-
-function openLoginWindow(url) {
-    var newWindow = window.open(url, 'Spotify Login', 'toolbar=no, menubar=no, status=no, directories=no, height=750, width=600');
-    if (window.focus) {
-        newWindow.focus();
-    }
-
-    var pollTimer   =   window.setInterval(function() {
-        try {
-            // console.log(newWindow.document.URL);
-            if (newWindow.document.URL.indexOf("/success") !== -1) {
-                window.clearInterval(pollTimer);
-
-                window.config.isLoggedIn = true;
-                displayConnectToSpotifyButton()
-
-                // var url =   newWindow.document.URL;
-                newWindow.close();
-            }
-        } catch(e) {
-            // console.error(e);
-        }
-    }, 100);
-}
+})();

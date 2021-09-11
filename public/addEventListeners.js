@@ -1,8 +1,7 @@
-function addEventListeners() {
-
+(function() {
     document.getElementById("search-input").addEventListener("keyup", event => {
         const input = event.target.value;
-        handleSearchEvent(input);
+        playlistDomUtils.handleSearchEvent(input);
     });
 
     // Disable enter key on input text fields
@@ -14,7 +13,5 @@ function addEventListeners() {
             }
         }
     },true);
-}
-
-addEventListeners();
+})();
 
