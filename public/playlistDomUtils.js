@@ -82,7 +82,7 @@ const playlistDomUtils = function() {
 
             playlistApi.addPlaylist(playlist)
                 .then(response => {
-                    console.log(response);
+                    // console.log(response);
                 })
                 .catch(error => {
                     console.error(error);
