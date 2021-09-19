@@ -57,7 +57,7 @@ const playlistDomUtils = function() {
         return div;
     };
 
-    const displaySaveFailedMessage = function(btn) {
+    const displaySaveFailedMessage = function(btnToReplace, btnToShowAfterFailedMessage) {
         const errorBtn = document.createElement("div");
 
         const errorBtnIcon = document.createElement("img");
@@ -72,13 +72,13 @@ const playlistDomUtils = function() {
         errorBtn.appendChild(errorBtnText);
         errorBtn.setAttribute("class", "error-btn");
 
-        const parent = btn.parentNode;
-        parent.replaceChild(errorBtn, btn);
+        const parent = btnToReplace.parentNode;
+        parent.replaceChild(errorBtn, btnToReplace);
 
+        // display error message for 6 seconds then replace error message with something else
         setTimeout(function(){
-            parent.replaceChild(btn, errorBtn);
+            parent.replaceChild(btnToShowAfterFailedMessage, errorBtn);
         }, 6000);
-
     };
 
     const displaySaveSuccessfulMessage = function(btn) {
@@ -98,6 +98,20 @@ const playlistDomUtils = function() {
 
         const parent = btn.parentNode;
         parent.replaceChild(successBtn, btn);
+    };
+
+    const showLoadingIcon = function (btn) {
+        const i = document.createElement("i");
+        i.setAttribute("class", "fa fa-spinner fa-spin");
+
+        const loadingDiv = document.createElement("div");
+        loadingDiv.appendChild(i);
+        loadingDiv.setAttribute("class", "loading");
+
+        const parent = btn.parentNode;
+        parent.replaceChild(loadingDiv, btn);
+
+        return loadingDiv;
     };
 
     const getAddBtn = function(playlist) {
@@ -124,14 +138,16 @@ const playlistDomUtils = function() {
                 return;
             }
 
+            const loadingDiv = showLoadingIcon(addBtn);
+
             playlistApi.addPlaylist(playlist, addBtn)
                 .then(response => {
                     // if status in the 200s then display success message
                     if(response.status >= 200 && response.status < 300) {
-                        displaySaveSuccessfulMessage(addBtn);
+                        displaySaveSuccessfulMessage(loadingDiv);
                     }
                     else { // Otherwise display error message
-                        displaySaveFailedMessage(addBtn);
+                        displaySaveFailedMessage(loadingDiv, addBtn);
                     }
                 })
                 .catch(error => {

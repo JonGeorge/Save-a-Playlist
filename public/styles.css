@@ -174,3 +174,10 @@ h3 {
     width: 125px;
     text-align: center;
 }
+
+.loading {
+    align-self: center;
+    width: 125px;
+    text-align: center;
+    color: #5bc057;
+}
