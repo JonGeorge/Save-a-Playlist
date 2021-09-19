@@ -77,7 +77,10 @@ const playlistDomUtils = function() {
 
         // display error message for 6 seconds then replace error message with something else
         setTimeout(function(){
-            parent.replaceChild(btnToShowAfterFailedMessage, errorBtn);
+            if(btnToShowAfterFailedMessage)
+                parent.replaceChild(btnToShowAfterFailedMessage, errorBtn);
+            else
+                parent.replaceChild(btnToReplace, errorBtn);
         }, 6000);
     };
 
