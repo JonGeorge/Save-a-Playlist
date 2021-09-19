@@ -36,7 +36,7 @@ const PlaylistService = {
         .then(pkg => {
             log.debug("Number of track uris retrieved", (pkg.list.length));
 
-            addItemsToPlaylist(pkg.list, pkg.newPlaylistId, tokens);
+            return addItemsToPlaylist(pkg.list, pkg.newPlaylistId, tokens);
         })
         .catch(err => log.debug(err));
     },

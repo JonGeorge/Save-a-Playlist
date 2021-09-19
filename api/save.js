@@ -21,8 +21,21 @@ router.post("/", (req, res) => {
         playlistDetails
     )
     .then(response => {
-        // if response.ok 
-        res.send("ok");
+        let data;
+
+        if (response.ok)
+            data = {
+                status: 200,
+                message: "Playlist successfully saved."
+            };
+
+        else
+            data = {
+                status: 500,
+                message: "Something is wrong. Spotify could not save the playlist."
+            };
+
+        res.send(data);
     })
     .catch(err => log.debug(err));
     
