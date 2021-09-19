@@ -37,14 +37,24 @@ module.exports = {
                 })
                 .catch(err => {
                     log.debug("Could not get Spotify user id.", err);
-                    return res.status(403).send("Could not get user id").end();
+
+                    const data = {
+                        status: 403,
+                        message: "Could not get user id"
+                    };
+                    return res.send(data);
                 });
         }
 
         // No access_token found
         else {
             log.debug("AuthChecker.viaSpotify() -> No access_token found");
-            return res.status(401).send("Spotify account not connected").end();
+
+            const data = {
+                status: 401,
+                message: "Spotify account not connected"
+            };
+            return res.send(data);
         }
     },
 };
