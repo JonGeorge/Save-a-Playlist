@@ -72,7 +72,7 @@ const playlistApi = function() {
     };
 
     return {
-        addPlaylist: function(playlist) {
+        addPlaylist: function(playlist, btn) {
             const data = {
                 id: playlist.id,
                 name: encodeURIComponent(playlist.name),
@@ -90,7 +90,7 @@ const playlistApi = function() {
                     "Content-Type": "application/x-www-form-urlencoded",
                 }
             })
-                .then(res => res.text())
+                .then(res => res.json())
                 .then(data => data)
                 .catch(err => console.error(err));
         },

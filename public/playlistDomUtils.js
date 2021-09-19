@@ -57,14 +57,57 @@ const playlistDomUtils = function() {
         return div;
     };
 
+    const displaySaveFailedMessage = function(btn) {
+        const errorBtn = document.createElement("div");
+
+        const errorBtnIcon = document.createElement("img");
+        errorBtnIcon.setAttribute("src", "/static/resources/alert-circle-outline-red.svg")
+        errorBtnIcon.setAttribute("class", "error-btn-icon");
+
+        const errorBtnText = document.createElement("span");
+        errorBtnText.setAttribute("class", "error-btn-text");
+        errorBtnText.textContent = "Oops!\r\nPlease connect to spotify.\r\nThen try again.";
+
+        errorBtn.appendChild(errorBtnIcon);
+        errorBtn.appendChild(errorBtnText);
+        errorBtn.setAttribute("class", "error-btn");
+
+        const parent = btn.parentNode;
+        parent.replaceChild(errorBtn, btn);
+
+        setTimeout(function(){
+            parent.replaceChild(btn, errorBtn);
+        }, 6000);
+
+    };
+
+    const displaySaveSuccessfulMessage = function(btn) {
+        const successBtn = document.createElement("div");
+
+        const successBtnIcon = document.createElement("img");
+        successBtnIcon.setAttribute("src", "/static/resources/check-mark-green.svg")
+        successBtnIcon.setAttribute("class", "error-btn-icon");
+
+        const successBtnText = document.createElement("span");
+        successBtnText.setAttribute("class", "save-btn-text");
+        successBtnText.textContent = "Saved";
+
+        successBtn.appendChild(successBtnIcon);
+        successBtn.appendChild(successBtnText);
+        successBtn.setAttribute("class", "success-btn");
+
+        const parent = btn.parentNode;
+        parent.replaceChild(successBtn, btn);
+    };
+
     const getAddBtn = function(playlist) {
         const addBtn = document.createElement("div");
         const addBtnPlus = document.createElement("span");
-        addBtnPlus.setAttribute("class", "plus");
+        addBtnPlus.setAttribute("class", "save-btn-icon");
         addBtnPlus.textContent = "+\n";
 
         const addBtnSave = document.createElement("span");
-        addBtnSave.setAttribute("class", "save");
+        addBtnSave.setAttribute("class", "save-btn-text");
         addBtnSave.textContent = "SAVE";
 
         addBtn.appendChild(addBtnPlus);
@@ -76,13 +119,20 @@ const playlistDomUtils = function() {
 
         addBtn.addEventListener("click", event => {
             if(!window.config.isLoggedIn) {
-                alert("Click the 'Connect to Spotify' button so we can save this playlist.");
+                // alert("Click the 'Connect to Spotify' button so we can save this playlist.");
+                displaySaveFailedMessage(addBtn);
                 return;
             }
 
-            playlistApi.addPlaylist(playlist)
+            playlistApi.addPlaylist(playlist, addBtn)
                 .then(response => {
-                    // console.log(response);
+                    // if status in the 200s then display success message
+                    if(response.status >= 200 && response.status < 300) {
+                        displaySaveSuccessfulMessage(addBtn);
+                    }
+                    else { // Otherwise display error message
+                        displaySaveFailedMessage(addBtn);
+                    }
                 })
                 .catch(error => {
                     console.error(error);
