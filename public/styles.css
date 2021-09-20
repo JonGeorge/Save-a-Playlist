@@ -1,10 +1,21 @@
+html {
+    height: 100%;
+}
+
 body {
+    margin: 0;
+    min-height: 100%;
+    position: relative;
+}
+
+#body-content {
     background-color: white;
     font-family: europa, sans-serif;
     max-width: 1200px;
     min-width: 380px;
     padding: 35px 150px;
     margin: 0 auto;
+    min-height: 100%;
 }
 
 header {
@@ -59,11 +70,11 @@ header .right-header {
     right: 162px;
 }
 
-.main-content {
+main {
     text-align: center;
 }
 
-.main-content h1, h3 {
+main h1, h3 {
     font-weight: normal;
 }
 
@@ -106,6 +117,10 @@ h3 {
     display: flex;
     margin-bottom: 30px;
     padding-bottom: 30px;
+}
+
+#search-results > ul > li:last-child {
+    margin-bottom: 90px;
 }
 
 .playlist-img {
@@ -180,4 +195,21 @@ h3 {
     width: 125px;
     text-align: center;
     color: #5bc057;
+}
+
+footer {
+    height: 50px;
+    background-color: #5bc057;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+footer .footer-content {
+    text-align: center;
+    color: white;
+    font-size: 14px;
+    font-family: europa, sans-serif;
+    position: relative;
+    top: 14px;
 }
