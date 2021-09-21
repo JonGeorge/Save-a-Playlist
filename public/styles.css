@@ -29,7 +29,7 @@ header a > span {
 }
 
 header .left-header {
-    color: #000000;
+    color: #07AB00;
     display: inline-block;
 }
 
@@ -49,9 +49,9 @@ header .right-header {
 }
 
 #login {
-    background-color: #e0e0e0;
+    background-color: #07AB00;
     border-radius: 10px;
-    color: #000000;
+    color: #FFFFFF;
     cursor: pointer;
     padding: 12px 22px;
     position: relative;
@@ -62,7 +62,7 @@ header .right-header {
 .connected-text {
     position: relative;
     top: 6px;
-    color: #318a2e;
+    color: #07AB00;
 }
 
 .checkmark{
@@ -150,14 +150,14 @@ h3 {
 .save-btn-icon {
     font-size: 36px;
     line-height: 0;
-    color: #318a2e;
+    color: #07AB00;
     position: relative;
     top: 2px;
 }
 
 .save-btn-text {
     font-size: 12px;
-    color: #318a2e;
+    color: #07AB00;
 }
 
 .error-btn {
@@ -194,12 +194,12 @@ h3 {
     align-self: center;
     width: 125px;
     text-align: center;
-    color: #318a2e;
+    color: #07AB00;
 }
 
 footer {
     height: 50px;
-    background-color: #000000;
+    background-color: #07AB00;
     position: absolute;
     bottom: 0;
     width: 100%;
