@@ -1,4 +1,6 @@
-const playlistDomUtils = function() {
+import { playlistApi } from "./playlistApi";
+
+export const playlistDomUtils = (function() {
 
     let oldPlaylistSearchValue = "";
 
@@ -196,4 +198,4 @@ const playlistDomUtils = function() {
             replaceResultsDiv(ul);
         },
     };
-}();
+})();

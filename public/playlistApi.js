@@ -1,4 +1,6 @@
-const playlistApi = function() {
+import { playlistDomUtils } from "./playlistDomUtils";
+
+export const playlistApi = (function() {
     /**
      * Executes a function after a delay. If the
      * returned function is called again before
@@ -97,4 +99,4 @@ const playlistApi = function() {
 
         debounceSearch: debounce(searchAndDisplayResults, 750),
     };
-}();
+})();

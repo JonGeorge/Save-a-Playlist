@@ -1,3 +1,5 @@
+import { playlistDomUtils } from "./playlistDomUtils";
+
 (function() {
     document.getElementById("search-input").addEventListener("keyup", event => {
         const input = event.target.value;
