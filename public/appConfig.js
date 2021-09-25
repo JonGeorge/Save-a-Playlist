@@ -1,3 +1,5 @@
+import "./styles.css";
+
 (function() {
     fetch("/getConfig")
     .then(res => res.json())

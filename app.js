@@ -50,7 +50,7 @@ app.use("/save", isLoggedIn.viaSpotify, saveApi);
 app.use("/notify-launch", emailApi);
 
 // Static route for serving static files
-app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, 'public/dist')));
 
 app.listen(config.port, () => {
     // Save a Spotify token using 'client credentials flow'

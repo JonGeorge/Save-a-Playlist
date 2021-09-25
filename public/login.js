@@ -2,7 +2,7 @@
 
     const getCheckIcon = function() {
         const checkIcon = document.createElement("img");
-        checkIcon.setAttribute("src", "/static/resources/check-mark-green.svg");
+        checkIcon.setAttribute("src", "/public/resources/check-mark-green.svg");
         checkIcon.setAttribute("class", "checkmark");
 
         return checkIcon;
