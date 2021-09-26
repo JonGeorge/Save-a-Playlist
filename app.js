@@ -52,12 +52,5 @@ app.use("/notify-launch", emailApi);
 // Static route for serving static files
 app.use('/public', express.static(path.join(__dirname, 'public/dist')));
 
-app.listen(config.port, () => {
-    // Save a Spotify token using 'client credentials flow'
-    // and refresh it at intervals based on config
-    clientCredentialService.beginCycle(
-        spotify.token.clientCredentialsTokenRefreshInterval
-    );
+module.exports = app;
 
-    console.log(`Listening on port ${config.port}`);
-});
