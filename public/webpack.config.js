@@ -31,7 +31,7 @@ const htmlWebpackPlugin = new HtmlWebpackPlugin({
 });
 
 module.exports = {
-    // Environment - "production" | "developmentt"
+    // Environment - "production" | "development"
     mode: "production",
 
     // Entry points for dependencies
