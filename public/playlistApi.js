@@ -97,6 +97,6 @@ export const playlistApi = (function() {
                 .catch(err => console.error(err));
         },
 
-        debounceSearch: debounce(searchAndDisplayResults, 750),
+        debounceSearch: debounce(searchAndDisplayResults, 500),
     };
 })();
