@@ -47,9 +47,9 @@ import "./resources/check-mark-green.svg";
             newWindow.focus();
         }
 
+        // Check for "/success" in the newWindow URL and close the window if found
         const pollTimer = window.setInterval(function() {
             try {
-                // console.log(newWindow.document.URL);
                 if(newWindow.document.URL.indexOf("/success") !== -1) {
                     window.clearInterval(pollTimer);
 
@@ -66,7 +66,7 @@ import "./resources/check-mark-green.svg";
         }, 100);
     };
 
-    if(window.config) {
+    if(window.config) { // Check if appConfig is loaded
         if(window.config.isLoggedIn) {
             const checkIcon             = getCheckIcon(),
                   span                  = getSpan("Connected to Spotify"),
@@ -94,8 +94,7 @@ import "./resources/check-mark-green.svg";
             rightHeader.appendChild(getConnectToSpotifyBtn());
         }
     }
-    // Config hasn't loaded yet
-    else {
+    else { // Config hasn't loaded yet, try again
         setTimeout(displayConnectToSpotifyButton, 50);
     }
 })();
