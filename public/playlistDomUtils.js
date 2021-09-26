@@ -1,4 +1,6 @@
 import { playlistApi } from "./playlistApi";
+import "./resources/check-mark-green.svg";
+import "./resources/alert-circle-outline-red.svg";
 
 export const playlistDomUtils = (function() {
 
@@ -63,7 +65,7 @@ export const playlistDomUtils = (function() {
         const errorBtn = document.createElement("div");
 
         const errorBtnIcon = document.createElement("img");
-        errorBtnIcon.setAttribute("src", "/public/resources/alert-circle-outline-red.svg")
+        errorBtnIcon.setAttribute("src", "/public/alert-circle-outline-red.svg")
         errorBtnIcon.setAttribute("class", "error-btn-icon");
 
         const errorBtnText = document.createElement("span");
@@ -90,7 +92,7 @@ export const playlistDomUtils = (function() {
         const successBtn = document.createElement("div");
 
         const successBtnIcon = document.createElement("img");
-        successBtnIcon.setAttribute("src", "/public/resources/check-mark-green.svg")
+        successBtnIcon.setAttribute("src", "/public/check-mark-green.svg")
         successBtnIcon.setAttribute("class", "error-btn-icon");
 
         const successBtnText = document.createElement("span");

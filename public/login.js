@@ -1,8 +1,10 @@
+import "./resources/check-mark-green.svg";
+
 (function displayConnectToSpotifyButton() {
 
     const getCheckIcon = function() {
         const checkIcon = document.createElement("img");
-        checkIcon.setAttribute("src", "/public/resources/check-mark-green.svg");
+        checkIcon.setAttribute("src", "/public/check-mark-green.svg");
         checkIcon.setAttribute("class", "checkmark");
 
         return checkIcon;
