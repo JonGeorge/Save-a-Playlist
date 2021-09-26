@@ -36,6 +36,17 @@ module.exports = {
                 test: /\.html$/i,
                 use: ["html-loader"],
             },
+            {
+                test: /(alert-circle-outline-red\.svg$)|(check-mark-green\.svg$)/i,
+                use: [
+                    {
+                        loader: "file-loader",
+                        options: {
+                            name: "[name].[ext]"
+                        },
+                    },
+                ],
+            },
         ],
     },
     optimization: {
