@@ -13,9 +13,15 @@ body {
     font-family: europa, sans-serif;
     max-width: 1200px;
     min-width: 380px;
-    padding: 35px 150px;
+    padding: 35px 30px;
     margin: 0 auto;
     min-height: 100%;
+}
+
+@media only screen and (min-width: 1200px) {
+    #body-content {
+        padding: 35px 150px;
+    }
 }
 
 header {
@@ -53,10 +59,18 @@ header .right-header {
     border-radius: 10px;
     color: #FFFFFF;
     cursor: pointer;
-    padding: 12px 22px;
+    padding: 11px 11px;
     position: relative;
     top: 12px;
     text-decoration: none;
+    font-size: 0.9rem;
+}
+
+@media only screen and (min-width: 680px) {
+    #login {
+        padding: 12px 22px;
+        font-size: 1rem;
+    }
 }
 
 .connected-text {
@@ -79,15 +93,36 @@ main h1, h3 {
 }
 
 h1 {
-    margin-top: 80px;
+    margin-top: 60px;
+    font-size: 1.75rem;
+}
+
+@media only screen and (min-width: 680px) {
+    h1 {
+        font-size: 2rem;
+        margin-top: 80px;
+    }
 }
 
 h3 {
+    font-size: 1.1rem;
     margin-top: 25px;
 }
 
+@media only screen and (min-width: 680px) {
+    h3 {
+        font-size: 1rem;
+    }
+}
+
+@media only screen and (min-width: 960px) {
+    h3 {
+        font-size: 1.15rem;
+    }
+}
+
 #search-input {
-    width: 70%;
+    width: 95%;
     border: none;
     border-bottom: 1px solid black;
     padding: 11px 0;
@@ -99,6 +134,12 @@ h3 {
     background-image: url("/public/resources/search.svg");
     background-repeat: no-repeat;
     background-position: 99% 10px;
+}
+
+@media only screen and (min-width: 1200px) {
+    #search-input {
+        width: 70%
+    }
 }
 
 #search-results {
@@ -125,8 +166,14 @@ h3 {
 
 .playlist-img {
     align-self: flex-start;
-    width:  175px;
+    width: 70px;
     margin-right: 35px;
+}
+
+@media only screen and (min-width: 680px) {
+    .playlist-img {
+        width:  175px;
+    }
 }
 
 .playlist-info-container {
@@ -136,7 +183,15 @@ h3 {
 .playlist-info-text {
     text-decoration: none;
     color: inherit;
+    font-size: 0.88rem;
 }
+
+@media only screen and (min-width: 680px) {
+    .playlist-info-text {
+        font-size: 1rem;
+    }
+}
+
 
 .add-btn {
     align-self: center;
