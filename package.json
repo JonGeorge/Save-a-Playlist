@@ -5,7 +5,7 @@
   "main": "server/app.js",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -r public/dist && npx webpack --config public/webpack.config.js"
   },
