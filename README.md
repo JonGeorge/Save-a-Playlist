@@ -11,9 +11,9 @@ offers.](https://support.spotify.com/us/article/save-recover-playlists/)
 What does this mean? A playlist you've had on repeat for the last 
 two weeks can be changed at any time at the discretion of the playlist owner. 
 Sometimes having songs removed from or added to a playlist is refreshing; or 
-a change in the order of your playlists' songs is welcomed. For the times when 
-those changes are not welcomed, you can use saveaplaylist.com to capture the 
-current state of a playlist for future enjoyment.
+a change in the order of your playlists' songs is welcomed.
+
+For the times when playlist changes are not welcomed, you can use saveaplaylist.com to capture the current state of a playlist for future enjoyment.
 
 Some playlists are perfect the way they are!
 
