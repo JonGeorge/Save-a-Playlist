@@ -2,26 +2,43 @@ version: "3"
 volumes:
   db-volume: { }
 services:
-  web:
+  app:
     depends_on:
       - db
-    env_file:
+     env_file:
       - ./.env
     build:
       context: .
       dockerfile: ./Dockerfile-web
-#    volumes:
-#      - ./:/sap
     ports:
-      - "3001:3001"
+      - 3001:3001
 
   db:
     build:
       context: .
       dockerfile: ./Dockerfile-db
-    environment:
-      - POSTGRES_PASSWORD=trust
+    env_file:
+      - ./.env.db
     ports:
-      - "5432:5432"
+      - 5432:5432
     volumes:
       - db-volume:/var/lib/postgresql/data
+  
+  web:
+    depends_on:
+      - app
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - ./nginx/sites-available/default:/etc/nginx/conf.d/default.conf:ro
+      - ./certbot/www/:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/letsencrypt/:ro
+  
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw

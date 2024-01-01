@@ -2,5 +2,4 @@ FROM node:latest
 RUN ["mkdir","/sap"]
 WORKDIR /sap
 COPY . /sap
-EXPOSE 3001/tcp
-ENTRYPOINT ["node", "/sap/app.js"]
+ENTRYPOINT ["/bin/bash", "-c", "sleep 7 && node /sap/app.js"]
