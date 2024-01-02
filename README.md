@@ -29,7 +29,7 @@ These steps are [Spotify's recommended method](https://support.spotify.com/us/ar
 automated it. 🤓
 
 ## Run Save-a-playlist locally
-There are 3 things you must do to get the application running locally:
+First run `git clone https://github.com/JonGeorge/Save-a-Playlist.git`. Then, there are 3 things you must do to get the application running locally:
 
 1. Create a `.env` file containing application environment variables.
 2. Create a `.env.db` file containing database environment variables.
