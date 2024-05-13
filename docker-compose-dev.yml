@@ -1,0 +1,32 @@
+version: "3"
+volumes:
+  db-volume: { }
+services:
+  app:
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+    build:
+      context: .
+      dockerfile: ./Dockerfile-web
+    networks:
+      - web-server
+    ports:
+      - "3001:3001"
+
+  db:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-db
+    env_file:
+      - ./.env.db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-volume:/var/lib/postgresql/data
+    networks:
+      - web-server
+
+networks:
+  web-server:
