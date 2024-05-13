@@ -10,8 +10,6 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile-web
-    networks:
-      - web-server
     ports:
       - "3001:3001"
 
@@ -25,8 +23,4 @@ services:
       - "5432:5432"
     volumes:
       - db-volume:/var/lib/postgresql/data
-    networks:
-      - web-server
 
-networks:
-  web-server:

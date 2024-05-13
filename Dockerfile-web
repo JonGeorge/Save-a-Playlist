@@ -2,4 +2,5 @@ FROM node:latest
 RUN ["mkdir","/sap"]
 WORKDIR /sap
 COPY . /sap
+RUN ["npm", "i"]
 ENTRYPOINT ["/bin/bash", "-c", "sleep 7 && node /sap/app.js"]
