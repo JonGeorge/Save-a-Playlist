@@ -1,6 +1,4 @@
-import { playlistDomUtils } from "./playlistDomUtils";
-
-export const playlistApi = (function() {
+const playlistApi = (function() {
     /**
      * Executes a function after a delay. If the
      * returned function is called again before

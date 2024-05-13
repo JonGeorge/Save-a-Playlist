@@ -1,5 +1,3 @@
-import "./resources/check-mark-green.svg";
-
 (function displayConnectToSpotifyButton() {
 
     const getCheckIcon = function() {
@@ -11,7 +9,7 @@ import "./resources/check-mark-green.svg";
     };
 
     const getSpan = function(txt) {
-        const span       = document.createElement("span");
+        const span= document.createElement("span");
         span.textContent = txt;
 
         return span;
