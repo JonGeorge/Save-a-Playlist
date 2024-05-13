@@ -5,7 +5,7 @@ const log   = require("../services/log");
 
 router.get("/", (req, res) => {
     // console.log(req);
-    const file = path.join(__dirname, "../public", "index.html");
+    const file = path.join(__dirname, "../public", "index_wip.html");
 
     if(!req.session.isLoggedIn)
         req.session.isLoggedIn = false;
