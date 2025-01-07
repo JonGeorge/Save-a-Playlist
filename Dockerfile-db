@@ -1,2 +1,2 @@
-FROM postgres:latest
+FROM postgres:16
 COPY ./scripts/table.sql /docker-entrypoint-initdb.d/
