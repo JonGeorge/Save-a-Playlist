@@ -9,7 +9,7 @@ router.get("/", (req, res) => {
     // Make a copy of our JS object so we dont mutate the original config
     let config = frontendConfig;
 
-    config.isLoggedIn = req.session.isLoggedIn;
+    config.isLoggedIn = req.session;
 
     res.json(config);
 });

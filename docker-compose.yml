@@ -1,26 +1,11 @@
 version: "3"
-volumes:
-  db-volume: { }
 services:
   sap:
-    depends_on:
-      - db
     env_file:
       - ./.env
     build:
       context: .
       dockerfile: ./Dockerfile-web
-    networks:
-      - web-server
-
-  db:
-    build:
-      context: .
-      dockerfile: ./Dockerfile-db
-    env_file:
-      - ./.env.db
-    volumes:
-      - db-volume:/var/lib/postgresql/data
     networks:
       - web-server
 
