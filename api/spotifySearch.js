@@ -1,5 +1,7 @@
 const router             = require("express").Router(),
       spotifyService     = require("../services/search"),
+      jwtService         = require("../services/jwt"),
+      config             = require("../config/app"),
       log                = require("../services/log");
 
 /**
@@ -18,8 +20,18 @@ router.get("/", (req, res) => {
     log.debug("GET /search ->", "query = " + req.query.q);
     
     const query = req.query.q,
-          isTypeahead = req.query.typeahead === "true",
-          token = req.session.tokens ? req.session.tokens.access_token : null;
+          isTypeahead = req.query.typeahead === "true";
+
+    // Get JWT token from cookies
+    const authToken = req.cookies[config.jwt.cookieName];
+    let token = null;
+
+    if (authToken) {
+        const decoded = jwtService.verifyToken(authToken);
+        if (decoded && decoded.tokens && decoded.tokens.access_token) {
+            token = decoded.tokens.access_token;
+        }
+    }
 
     spotifyService.search(query, isTypeahead, token)
     .then(result => {
@@ -27,6 +39,7 @@ router.get("/", (req, res) => {
     })
     .catch(error => {
         console.log(error);
+        res.status(500).json({ error: "Search failed" });
     });
 
 

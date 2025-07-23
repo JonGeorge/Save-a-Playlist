@@ -5,6 +5,7 @@ const { getFormattedDateStr } = require("../services/utils");
 
 router.post("/", (req, res) => {
     log.debug("POST /save -> Save request received ", req.body);
+    log.debug("POST /save -> Auth data", { user_id: req.auth.user_id, tokens: req.auth.tokens });
     const { tracksUrl, name, dateTimeStr } = req.body;
     const date = getFormattedDateStr(dateTimeStr);
     
@@ -16,8 +17,8 @@ router.post("/", (req, res) => {
     };
     
     playlist.createPlaylistFromTracks(
-        req.session.user_id,
-        req.session.tokens,
+        req.auth.user_id,
+        req.auth.tokens,
         playlistDetails
     )
     .then(response => {
