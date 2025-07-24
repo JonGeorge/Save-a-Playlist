@@ -116,7 +116,7 @@ function addItemsToPlaylist(items, playlist, tokens, offset = 0) {
                       'Successfully added ' + end + ' items to playlist');
                 return { ok: true };
             }
-            else {return addItemsToPlaylist(items, playlist, tokens.access_token, ++offset);}
+            else {return addItemsToPlaylist(items, playlist, tokens, ++offset);}
 
         })
         .catch(err => log.error('Playlist service error:', err));
@@ -157,7 +157,7 @@ function getItemsFromExistingPlaylist(url, isFirst, items, tokens) {
             });
 
             if(response.next) {
-                return getItemsFromExistingPlaylist(response.next, false, items, tokens.access_token)
+                return getItemsFromExistingPlaylist(response.next, false, items, tokens)
                     .then(() => {
                         return items;
                     })
