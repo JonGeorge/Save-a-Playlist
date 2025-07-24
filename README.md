@@ -29,48 +29,67 @@ These steps are [Spotify's recommended method](https://support.spotify.com/us/ar
 automated it. 🤓
 
 ## Run Save-a-playlist locally
-First run `git clone https://github.com/JonGeorge/Save-a-Playlist.git`. Then, there are 3 things you must do to get the application running locally:
 
-1. Create a `.env` file containing application environment variables.
-2. Create a `.env.db` file containing database environment variables.
-3. Comment out the certbot and nginx services in docker-compose.yml.
+### Prerequisites
+- Node.js (version 14 or higher)
+- Vercel CLI: `npm install -g vercel`
 
-### 1. Create a `.env` file
-In the project root directory, create a file named `.env` and set the following values:
+### Setup Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/JonGeorge/Save-a-Playlist.git
+   cd Save-a-Playlist
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Create environment file**
+   Create a `.env` file in the project root with the following variables:
+   ```bash
+   # Set to true for verbose application logging
+   DEBUG=true
+   
+   # Development port (default: 3001)
+   PORT=3001
+   
+   # Protocol for OAuth redirects (use "http://" for local dev)
+   PROTOCOL=http://
+   
+   # Spotify API credentials (get from https://developer.spotify.com/)
+   CLIENT_ID=your_spotify_client_id
+   CLIENT_SECRET=your_spotify_client_secret
+   
+   # JWT signing secret (generate a random secure string)
+   JWT_SECRET=your_random_jwt_secret
+   ```
+
+4. **Configure Spotify App**
+   - Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+   - Create a new app or use an existing one
+   - Add `http://localhost:3001/login/callback` to your app's redirect URIs
+
+5. **Start the development server**
+   ```bash
+   vercel dev --listen 3001
+   ```
+
+The application will be available at `http://localhost:3001`
+
+### Development Commands
 ```bash
-# Set to true for verbose application logging
-DEBUG=true
+# Start development server
+vercel dev --listen 3001
 
-# Set the port on which the application should listen
-PORT=
+# Run linter
+npm run lint
 
-# Set the protocol used by the application (use "http://" for local dev)
-PROTOCOL=http://
+# Fix linting issues
+npm run lint:fix
 
-# Spotify credentials
-CLIENT_ID=
-CLIENT_SECRET=
-
-# Random string for session cookie encryption
-COOKIE_SECRET=
-
-# Database details allowing the application to connect to the database
-PGHOST=
-PGUSER=
-PGDATABASE=
-PGPASSWORD=
-PGPORT=
-```
-
-### 2. Create a `.env.db` file
-In the project root directory, create a file named `.env.db` and set the following values:
-```bash
-# Set the database password
-POSTGRES_PASSWORD=
-
-# Set the database to create
-POSTGRES_DB=
-
-# Set the database user
-POSTGRES_USER=
+# Build for production
+npm run build
 ```
