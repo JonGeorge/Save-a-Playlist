@@ -1,0 +1,40 @@
+{
+  "rewrites": [
+    {
+      "source": "/getConfig",
+      "destination": "/api/getConfig"
+    },
+    {
+      "source": "/login",
+      "destination": "/api/login"
+    },
+    {
+      "source": "/login/callback",
+      "destination": "/api/login/callback"
+    },
+    {
+      "source": "/search",
+      "destination": "/api/search"
+    },
+    {
+      "source": "/save",
+      "destination": "/api/save"
+    },
+    {
+      "source": "/error",
+      "destination": "/api/error"
+    },
+    {
+      "source": "/success",
+      "destination": "/api/success"
+    },
+    {
+      "source": "/public/(.*)",
+      "destination": "/public/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/api/index"
+    }
+  ]
+}
