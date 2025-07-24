@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Save a playlist to your personal Spotify library to avoid being subject to unwanted playlist updates."/>
+    <title>Save a playlist</title>
+    <script src="/static/appConfig.js"></script>
+    
+    <style>
+        body {
+            background-color: gray;
+        }
+    </style>
+</head>
+
+<body id="body">
+    <div>
+        <strong>Connect to Spotify</strong><br>
+        <button id="login">Login here</button>
+    </div>
+    
+    <br>
+
+    <div>
+        <strong>Search</strong>
+        <form action="/search">
+            <label for="search">q=</label>
+            <input type="text" id="search-input" name="q"/>
+
+            <input type="submit" value="Search"/>
+        </form>
+    </div>
+    <div id="result"></div>
+</body>
+<script src="/static/typeahead.js"></script>
+<script src="/static/testing.js"></script>
