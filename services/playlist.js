@@ -1,7 +1,7 @@
-const log = require("./log");
-const spotifyDao = require("../dao/spotify");
-const spotify = require("../config/spotify");
-const {jsonToQueryStr} = require("./utils")
+const log = require('./log');
+const spotifyDao = require('../dao/spotify');
+const spotify = require('../config/spotify');
+const { jsonToQueryStr } = require('./utils');
 
 const PlaylistService = {
 
@@ -21,25 +21,25 @@ const PlaylistService = {
      *                         tracks url, and public boolean flag
      */
     createPlaylistFromTracks: function(user, tokens, details) {
-        const { name, description, public, tracks } = details;
+        const { name, description, public: isPublic, tracks } = details;
 
         const items = [];
 
-        return createEmptyPlaylist(name, description, public, user, tokens)
-        .then(newPlaylistId => {
-            return getItemsFromExistingPlaylist(tracks, true, items, tokens)
-            .then(list => {
-                return { list, newPlaylistId };
+        return createEmptyPlaylist(name, description, isPublic, user, tokens)
+            .then(newPlaylistId => {
+                return getItemsFromExistingPlaylist(tracks, true, items, tokens)
+                    .then(list => {
+                        return { list, newPlaylistId };
+                    })
+                    .catch(err => log.debug(err));
+            })
+            .then(pkg => {
+                log.debug('Number of track uris retrieved', (pkg.list.length));
+
+                return addItemsToPlaylist(pkg.list, pkg.newPlaylistId, tokens);
             })
             .catch(err => log.debug(err));
-        })
-        .then(pkg => {
-            log.debug("Number of track uris retrieved", (pkg.list.length));
-
-            return addItemsToPlaylist(pkg.list, pkg.newPlaylistId, tokens);
-        })
-        .catch(err => log.debug(err));
-    },
+    }
 };
 
 /**
@@ -48,33 +48,33 @@ const PlaylistService = {
  * 
  * @param {string} name Name of the playlist to be created.
  * @param {string} description Description of the playlist added to Spotify
- * @param {boolean} public If true, the created playlist will be public
+ * @param {boolean} isPublic If true, the created playlist will be public
  * @param {string} user Spotify user id of the user to which the new playlist belongs
  * @param {object} tokens Object containing access and refresh tokens
  * 
  * @returns Promise containing the id of the newly created playlist
  */
-function createEmptyPlaylist(name, description, public, user, tokens) {
+function createEmptyPlaylist(name, description, isPublic, user, tokens) {
 
     const data = {
-        "name": name,
-        "public": public,
-        "description": description || spotify.playlist.defaultDescription // Add validation on description - i.e. no " "
+        'name': name,
+        'public': isPublic,
+        'description': description || spotify.playlist.defaultDescription // Add validation on description - i.e. no " "
     };
 
     const url = `https://api.spotify.com/v1/users/${user}/playlists`;
-    const options = spotifyDao.getJsonRequestOptions("post", url, tokens.access_token, data);
+    const options = spotifyDao.getJsonRequestOptions('post', url, tokens.access_token, data);
 
-    log.debug("Playlist.createEmptyPlaylist() -> Creating playlist: " + name);
+    log.debug('Playlist.createEmptyPlaylist() -> Creating playlist: ' + name);
     return spotifyDao.request(options, tokens.refresh_token)
-    .then(newPlaylist => {
-        log.debug("Playlist.createEmptyPlaylist() -> Successfully created playlist");
-        // log.debug("Playlist created response ->", response);
+        .then(newPlaylist => {
+            log.debug('Playlist.createEmptyPlaylist() -> Successfully created playlist');
+            // log.debug("Playlist created response ->", response);
 
-        return newPlaylist.id;
+            return newPlaylist.id;
         // Need to return the response
-    })
-    .catch(err => console.error(err));
+        })
+        .catch(err => log.error('Playlist service error:', err));
 }
 
 /**
@@ -102,24 +102,24 @@ function addItemsToPlaylist(items, playlist, tokens, offset = 0) {
 
     const itemsToAdd = items.slice(start, end);
     
-    const data = {"uris": itemsToAdd};
+    const data = { 'uris': itemsToAdd };
 
     const url = `https://api.spotify.com/v1/playlists/${playlist}/tracks`;
 
-    const options = spotifyDao.getJsonRequestOptions("post", url, tokens.access_token, data);
+    const options = spotifyDao.getJsonRequestOptions('post', url, tokens.access_token, data);
 
     return spotifyDao.request(options, tokens.refresh_token)
-    .then(response => {
+        .then(response => {
         
-        if(end === items.length) {
-            log.debug("Playlist.addItemsToPlaylist() -> " + 
-                      "Successfully added " + end + " items to playlist");
-            return {ok: true};
-        }
-        else return addItemsToPlaylist(items, playlist, tokens.access_token, ++offset);
+            if(end === items.length) {
+                log.debug('Playlist.addItemsToPlaylist() -> ' + 
+                      'Successfully added ' + end + ' items to playlist');
+                return { ok: true };
+            }
+            else {return addItemsToPlaylist(items, playlist, tokens.access_token, ++offset);}
 
-    })
-    .catch(err => console.error(err));
+        })
+        .catch(err => log.error('Playlist service error:', err));
 }
 
 /**
@@ -138,7 +138,7 @@ function addItemsToPlaylist(items, playlist, tokens, offset = 0) {
 function getItemsFromExistingPlaylist(url, isFirst, items, tokens) {
     if(isFirst) {
         const params = {
-            fields: "next,items(track(uri))",
+            fields: 'next,items(track(uri))',
             limit: 100,
             offset: 0
         };
@@ -146,30 +146,30 @@ function getItemsFromExistingPlaylist(url, isFirst, items, tokens) {
         url = `${url}?${jsonToQueryStr(params)}`;
     }
 
-    const options = spotifyDao.getJsonRequestOptions("get", url, tokens.access_token);
+    const options = spotifyDao.getJsonRequestOptions('get', url, tokens.access_token);
 
     log.debug(`Playlist.getItemsFromExistingPlaylist() -> Getting items from playlist ${url}`);
     return spotifyDao.request(options, tokens.refresh_token)
-    .then(response => {
+        .then(response => {
 
-        response.items.forEach(item => {
-            items.push(item.track.uri);
-        });
+            response.items.forEach(item => {
+                items.push(item.track.uri);
+            });
 
-        if(response.next) {
-            return getItemsFromExistingPlaylist(response.next, false, items, tokens.access_token)
-            .then(() => {
-                return items;
-            })
-            .catch(err => console.error(err));
-        }
+            if(response.next) {
+                return getItemsFromExistingPlaylist(response.next, false, items, tokens.access_token)
+                    .then(() => {
+                        return items;
+                    })
+                    .catch(err => log.error('Playlist service error:', err));
+            }
 
-        log.debug("Playlist.getItemsFromExistingPlaylist() -> " + 
-                  "Successfully retrieved all items.");
+            log.debug('Playlist.getItemsFromExistingPlaylist() -> ' + 
+                  'Successfully retrieved all items.');
 
-        return items;
-    })
-    .catch(err => console.error(err));
+            return items;
+        })
+        .catch(err => log.error('Playlist service error:', err));
 }
 
 module.exports = PlaylistService;

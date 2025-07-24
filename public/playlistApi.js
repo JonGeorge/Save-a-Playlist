@@ -15,9 +15,9 @@ const playlistApi = (function() {
         let timer = 0;
 
         return function(input, onlyClearTimeout) {
-            if(timer) clearTimeout(timer);
+            if(timer) {clearTimeout(timer);}
 
-            if(onlyClearTimeout) return;
+            if(onlyClearTimeout) {return;}
 
             timer = setTimeout(() => {
                 fn(input);
@@ -32,11 +32,11 @@ const playlistApi = (function() {
      * @returns {string} a query string that can be appended to a URL.
      */
     const jsonToQueryStr = function(json) {
-        let str = "";
+        let str = '';
 
         Object.keys(json).forEach((key, i, arr) => {
             str += `${key}=${json[key]}`;
-            str += i !== arr.length-1 ? "&" : "";
+            str += i !== arr.length-1 ? '&' : '';
         });
 
         return str;
@@ -53,7 +53,6 @@ const playlistApi = (function() {
             .then(res => res.json())
             .then(data => {
                 // LOG DATA FOR TESTING
-                // console.log(data);
                 return data;
             })
             .catch(err => console.error(err));
@@ -62,12 +61,33 @@ const playlistApi = (function() {
     const searchAndDisplayResults = function(input) {
         search(input)
             .then(response => {
-                // console.log(response); // TODO: Handle response with search results
+                
+                // Check if response has the expected structure
+                if (!response) {
+                    console.error('No response received from search API');
+                    return;
+                }
+                
+                if (response.error) {
+                    console.error('Search API error:', response.error);
+                    return;
+                }
+                
+                if (!response.playlists) {
+                    console.error('Response missing playlists property:', response);
+                    return;
+                }
+                
+                if (!response.playlists.items) {
+                    console.error('Response playlists missing items property:', response.playlists);
+                    return;
+                }
+                
                 const playlists = response.playlists.items;
                 playlistDomUtils.displayPlaylistResults(playlists);
             })
             .catch(error => {
-                console.error(error);
+                console.error('Search error:', error);
             });
     };
 
@@ -77,17 +97,17 @@ const playlistApi = (function() {
                 id: playlist.id,
                 name: encodeURIComponent(playlist.name),
                 tracksUrl: playlist.tracks.href,
-                dateTimeStr: new Date().toString(),
+                dateTimeStr: new Date().toString()
                 // totalTracks: playlist.tracks.total,
             };
 
             const dataStr = jsonToQueryStr(data);
 
-            return fetch("/save", {
-                "method": "POST",
-                "body": dataStr,
-                "headers": {
-                    "Content-Type": "application/x-www-form-urlencoded",
+            return fetch('/save', {
+                'method': 'POST',
+                'body': dataStr,
+                'headers': {
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 }
             })
                 .then(res => res.json())
@@ -95,6 +115,6 @@ const playlistApi = (function() {
                 .catch(err => console.error(err));
         },
 
-        debounceSearch: debounce(searchAndDisplayResults, 500),
+        debounceSearch: debounce(searchAndDisplayResults, 500)
     };
 })();

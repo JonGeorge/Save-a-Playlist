@@ -5,9 +5,11 @@
   "main": "server/app.js",
   "private": true,
   "scripts": {
-    "start": "node app.js",
+    "start": "node -e \"console.log('Use vercel dev for local development')\"",
+    "build": "mkdir -p public && echo 'Build complete' > public/build.txt",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -r public/dist && npx webpack --config public/webpack.config.js"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "author": "Jon George and Nicole Ramlogan",
   "license": "ISC",
@@ -21,5 +23,8 @@
     "helmet": "^4.2.0",
     "jsonwebtoken": "^9.0.2",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "eslint": "^9.31.0"
   }
 }

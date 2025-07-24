@@ -1,7 +1,0 @@
-FROM node:latest
-RUN ["mkdir","/sap"]
-WORKDIR /sap
-COPY . /sap
-RUN ["npm", "i"]
-EXPOSE 3001
-ENTRYPOINT ["/bin/bash", "-c", "sleep 7 && node /sap/app.js"]

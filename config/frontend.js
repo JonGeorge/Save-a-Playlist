@@ -1,5 +1,5 @@
-const config = require("./app");
+const config = require('./app');
 
 module.exports = {
-    minimumCharsForTypeahead: config.search.minimumCharsForTypeahead,
+    minimumCharsForTypeahead: config.search.minimumCharsForTypeahead
 };

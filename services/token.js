@@ -1,7 +1,7 @@
-const spotifyDao = require("../dao/spotify"),
-      spotifyConfig = require("../config/spotify"),
-      log = require("../services/log"),
-      { jsonToQueryStr } = require("./utils");
+const spotifyDao = require('../dao/spotify'),
+    spotifyConfig = require('../config/spotify'),
+    log = require('../services/log'),
+    { jsonToQueryStr } = require('./utils');
 
 const SpotifyTokenService = {
     /**
@@ -18,60 +18,60 @@ const SpotifyTokenService = {
      *                      flow options are provided.
      * @returns object containing POST request options.
      */
-    getTokenOptions: code => {
+    getTokenOptions: (code, redirectUri) => {
         let data = {
-            grant_type: "client_credentials"
+            grant_type: 'client_credentials'
         };
 
         if(code) {
             data =  {
-                "code"          : code,
-                "redirect_uri"  : spotifyConfig.auth.options.redirect_uri,
-                "grant_type"    : "authorization_code"
-            }
+                'code'          : code,
+                'redirect_uri'  : redirectUri || spotifyConfig.auth.options.redirect_uri,
+                'grant_type'    : 'authorization_code'
+            };
         }
         
         const encodedAuthStr = getEncodedClientIdAndSecret(),
-              dataStr        = jsonToQueryStr(data);
+            dataStr        = jsonToQueryStr(data);
 
         return {
-            "method": "post",
-            "url"   : spotifyConfig.token.url,
-            "data"  : dataStr,
-            "headers": {
-                "Authorization" : "Basic " + encodedAuthStr,
-                "Content-Type"  : "application/x-www-form-urlencoded"
+            'method': 'post',
+            'url'   : spotifyConfig.token.url,
+            'data'  : dataStr,
+            'headers': {
+                'Authorization' : 'Basic ' + encodedAuthStr,
+                'Content-Type'  : 'application/x-www-form-urlencoded'
             },
-            "json": true
+            'json': true
         };
     },
 
     getToken: options => {
         return spotifyDao.getToken(options)
-        .then(response => response)
-        .catch(err => log.debug(err));
+            .then(response => response)
+            .catch(err => log.debug(err));
     },
 
     getRefreshTokenOptions: refreshToken => {
         const data = {
-            "grant_type"    : "refresh_token",
-            "refresh_token" : refreshToken
+            'grant_type'    : 'refresh_token',
+            'refresh_token' : refreshToken
         };
 
         const encodedAuthStr = getEncodedClientIdAndSecret(),
-              dataStr        = jsonToQueryStr(data);
+            dataStr        = jsonToQueryStr(data);
         
         return {
-            "method": "post",
-            "url"   : spotifyConfig.token.url,
-            "data"  : dataStr,
-            "headers": {
-                "Authorization" : "Basic " + encodedAuthStr,
-                "Content-Type"  : "application/x-www-form-urlencoded"
+            'method': 'post',
+            'url'   : spotifyConfig.token.url,
+            'data'  : dataStr,
+            'headers': {
+                'Authorization' : 'Basic ' + encodedAuthStr,
+                'Content-Type'  : 'application/x-www-form-urlencoded'
             },
-            "json": true
+            'json': true
         };
-    },
+    }
 };
 
 /**
@@ -80,10 +80,10 @@ const SpotifyTokenService = {
  * @returns Base64 encoded ClientID:ClientSecret
  */
 function getEncodedClientIdAndSecret() {
-    const authStr        = spotifyConfig.client_id + ":" + spotifyConfig.client_secret,
-          buffer         = new Buffer.from(authStr),
-          encodedAuthStr = buffer.toString("base64");
+    const authStr        = spotifyConfig.client_id + ':' + spotifyConfig.client_secret,
+        buffer         = new Buffer.from(authStr),
+        encodedAuthStr = buffer.toString('base64');
 
-          return encodedAuthStr;
+    return encodedAuthStr;
 }
 module.exports = SpotifyTokenService;
