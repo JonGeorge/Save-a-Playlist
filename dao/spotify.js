@@ -1,5 +1,5 @@
-const axios = require("axios");
-const log   = require("../services/log");
+const axios = require('axios');
+const log   = require('../services/log');
 
 const SpotifyDao = {
     /**
@@ -12,22 +12,26 @@ const SpotifyDao = {
      * @returns Promise containing access and refresh tokens in an object.
      */
     getToken: options => {
-        log.debug("SpotifyDao.getToken()", options);
+        log.debug('SpotifyDao.getToken()', options);
 
         return axios(options)
 
             .then(response => {
-                log.debug("Token retrieved successfully.");
+                log.debug('Token retrieved successfully.');
 
                 return {
                     access_token    : response.data.access_token,
-                    refresh_token   : response.data.refresh_token
+                    refresh_token   : response.data.refresh_token,
+                    expires_in      : response.data.expires_in,
+                    error           : response.data.error,
+                    error_description: response.data.error_description
                 };
             })
 
             .catch(error => {
-                throw new Error("Could not get token from Spotify API. " +
-                error);
+                log.debug('Token request error:', error.response?.data || error.message);
+                const errorMsg = error.response?.data?.error_description || error.response?.data?.error || error.message;
+                throw new Error(`Could not get token from Spotify API: ${errorMsg}`);
             });
     },
 
@@ -41,17 +45,17 @@ const SpotifyDao = {
      */
     getJsonRequestOptions: function(method, url, token, data) {
         const options = {
-            "method": method,
-            "url": url,
-            "headers": {
-                "Authorization": "Bearer " + token,
-                "Content-Type": "application/json"
+            'method': method,
+            'url': url,
+            'headers': {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
             },
-            "json": true
+            'json': true
         };
 
         if(data) 
-            options.data = typeof(data) == "string" ? data : JSON.stringify(data);
+        {options.data = typeof(data) === 'string' ? data : JSON.stringify(data);}
 
         return options;
     },
@@ -69,59 +73,59 @@ const SpotifyDao = {
      * @returns Promise containing http response from Spotify
      */
     request: (options, refreshToken) => {
-        log.debug("SpotifyDao.request()", options);
+        log.debug('SpotifyDao.request()', options);
 
         return axios(options)
 
-        .then(response => {
-            return response.data;
-        })
+            .then(response => {
+                return response.data;
+            })
 
-        .catch(error => {
-            if(error.response.status === 401) {
-                log.debug("SpotifyDao.request() -> Token isn't authorized");
+            .catch(error => {
+                if(error.response.status === 401) {
+                    log.debug("SpotifyDao.request() -> Token isn't authorized");
 
-                if(refreshToken) {
-                    return getNewAccessToken(refreshToken)
-                    .then(newAccessToken => {
-                        return retryRequest(newAccessToken, options);
-                    })
-                    .catch(err => log.debug(err));
+                    if(refreshToken) {
+                        return getNewAccessToken(refreshToken)
+                            .then(newAccessToken => {
+                                return retryRequest(newAccessToken, options);
+                            })
+                            .catch(err => log.debug(err));
+                    }
+                    else {
+                        throw new Error('Could not use refreshed access token. ' +
+                    error);
+                    }
                 }
                 else {
-                    throw new Error("Could not use refreshed access token. " +
-                    error);
-                }
-            }
-            else {
-                throw new Error("There was an error using the Spotify API. " +
+                    throw new Error('There was an error using the Spotify API. ' +
                 error);
-            }
-        });
-    },    
+                }
+            });
+    }    
 };
 
 function getNewAccessToken(refreshToken) {
-    const options = require("../services/token").getRefreshTokenOptions(refreshToken);
+    const options = require('../services/token').getRefreshTokenOptions(refreshToken);
 
-    log.debug("Refreshing our access token...");
+    log.debug('Refreshing our access token...');
 
     return axios(options)
-    .then(token => token.access_token)
-    .catch(error => {
-        throw new Error("Could not get new access token using refresh token. " +
+        .then(token => token.access_token)
+        .catch(error => {
+            throw new Error('Could not get new access token using refresh token. ' +
         error);
-    });
+        });
 }
 
 function retryRequest(newAccessToken, options) {
-    log.debug("Retrying request with refreshed access token");
+    log.debug('Retrying request with refreshed access token');
                     
     const newOptions = JSON.parse(JSON.stringify(options));
-    newOptions.headers.Authorization = "Bearer " + newAccessToken;
+    newOptions.headers.Authorization = 'Bearer ' + newAccessToken;
 
     return SpotifyDao.request(newOptions)
-    .catch(err => log.debug(err));
+        .catch(err => log.debug(err));
 }
 
 module.exports = SpotifyDao;

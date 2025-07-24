@@ -1,6 +1,6 @@
-const spotify            = require("../config/spotify"),
-      log                = require("../services/log"),
-      tokenService       = require("./token");
+const spotify            = require('../config/spotify'),
+    log                = require('../services/log'),
+    tokenService       = require('./token');
 
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
 
         // then refresh token at intervals thereafter
         refreshClientCredentialsTokenAtIntervals(interval);
-    },
+    }
 };
 
 /**
@@ -22,7 +22,7 @@ module.exports = {
  * @returns undefined
  */
 function refreshClientCredentialsTokenAtIntervals(delay) {
-    let timer = setInterval(function() {
+    const timer = setInterval(function() {
         setClientCredentialsToken();
         clearInterval(timer);
 
@@ -37,12 +37,12 @@ function refreshClientCredentialsTokenAtIntervals(delay) {
  */
 function setClientCredentialsToken() {
     getNewClientCredentialsToken()
-    .then(token => {
-        spotify.token.clientCredentialsToken = token.access_token;
-    })
-    .catch(error => {
-        log.debug(error);
-    });
+        .then(token => {
+            spotify.token.clientCredentialsToken = token.access_token;
+        })
+        .catch(error => {
+            log.debug(error);
+        });
 }
 
 /**
@@ -54,8 +54,8 @@ function setClientCredentialsToken() {
 function getNewClientCredentialsToken() {
     const options = tokenService.getTokenOptions();
     return tokenService.getToken(options)
-    .then(response => response)
-    .catch(err => log.debug(err));
+        .then(response => response)
+        .catch(err => log.debug(err));
 }
 
 

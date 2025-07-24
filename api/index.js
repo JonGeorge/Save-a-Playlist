@@ -1,22 +1,23 @@
-const router = require("express").Router();
-const path   = require("path");
+const path = require('path');
+const fs = require('fs');
 
-const log   = require("../services/log");
+const log = require('../services/log');
 
-router.get("/", (req, res) => {
-    // console.log(req);
-    const file = path.join(__dirname, "../public", "index_wip.html");
+module.exports = async (req, res) => {
+    if (req.method !== 'GET') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
 
-    log.debug("GET /  ->", `res.sendFile ${file}`);
-    res.sendFile(file);
-});
+    try {
+        const filePath = path.join(__dirname, '..', 'public', 'index_wip.html');
+        const htmlContent = fs.readFileSync(filePath, 'utf8');
 
-router.get("/error", (req, res) => {
-    res.send("There has been an error.");
-});
+        log.debug('GET /  ->', 'serving index_wip.html');
 
-router.get("/success", (req, res) => {
-    res.send("Success");
-});
-
-module.exports = router;
+        res.setHeader('Content-Type', 'text/html');
+        res.status(200).send(htmlContent);
+    } catch (error) {
+        log.debug('Error serving index:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};

@@ -1,5 +1,5 @@
 (function() {
-    document.getElementById("search-input").addEventListener("keyup", event => {
+    document.getElementById('search-input').addEventListener('keyup', event => {
         const input = event.target.value;
         playlistDomUtils.handleSearchEvent(input);
     });

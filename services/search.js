@@ -1,8 +1,9 @@
-const { jsonToQueryStr } = require("./utils"),
-      config             = require("../config/app"),
-      spotify            = require("../config/spotify"),
-      spotifyDao         = require("../dao/spotify"),
-      log                = require("./log");
+const { jsonToQueryStr } = require('./utils'),
+    config             = require('../config/app'),
+    spotify            = require('../config/spotify'),
+    spotifyDao         = require('../dao/spotify'),
+    serverlessClientCredential = require('./serverlessClientCredential'),
+    log                = require('./log');
 
 const SpotifySearchService = {
     /**
@@ -14,30 +15,34 @@ const SpotifySearchService = {
      * 
      * @returns Promise contianing the search results in the response
      */
-    search: (query, isTypeahead, token) => {
-        log.debug("SpotifySearch.search() -> Preparing search...");
+    search: async (query, isTypeahead, token) => {
+        log.debug('SpotifySearch.search() -> Preparing search...');
         const url = getSearchUrl(query, isTypeahead);
 
-        log.debug("SpotifySearch.search() -> Generated search url");
+        log.debug('SpotifySearch.search() -> Generated search url');
 
         if(!token) { // User isnt authenticated, use client cred token instead
-            log.debug("SpotifySearch.search() -> No session token present; " +
-                        "using client credentials token instead");
+            log.debug('SpotifySearch.search() -> No session token present; ' +
+                        'using client credentials token instead');
 
-            token = spotify.token.clientCredentialsToken;
+            try {
+                token = await serverlessClientCredential.getClientCredentialsToken();
+            } catch (error) {
+                log.debug('Failed to get client credentials token:', error);
+                throw new Error('Unable to authenticate with Spotify');
+            }
         }
 
-        log.debug("SpotifySearch.search() -> Getting search results from Spotify");
+        log.debug('SpotifySearch.search() -> Getting search results from Spotify');
 
-        return getSearchResults(url, token)
-        .then(results => {
-            // log.debug(results); // debug search results
+        try {
+            const results = await getSearchResults(url, token);
             return results;
-        })
-        .catch(error => {
+        } catch (error) {
             log.debug(error);
-        });
-    },   
+            throw error;
+        }
+    }   
 };
 
 /**
@@ -51,14 +56,14 @@ const SpotifySearchService = {
  */
 function getSearchOptions(url, token) {
     return {
-        "method"  : "get",
-        "url"     : url,
-        "headers" : { 
-            "Authorization": "Bearer " + token,
-            "Accept": "application/json",
-            "Content-Type": "application/json"
+        'method'  : 'get',
+        'url'     : url,
+        'headers' : { 
+            'Authorization': 'Bearer ' + token,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
         },
-        "json"    : true
+        'json'    : true
     };
 }
 
@@ -73,14 +78,14 @@ function getSearchOptions(url, token) {
 function getSearchUrl(query, isTypeahead) {
     const encodedQuery = encodeURIComponent(query);
 
-    let urlParams = spotify.search.params;
+    const urlParams = spotify.search.params;
     urlParams.q = encodedQuery;
 
     if(isTypeahead) {
-        urlParams.limit = config.search.typeAheadReturnCount
+        urlParams.limit = config.search.typeAheadReturnCount;
     }
 
-    let url = spotify.search.base + "?";
+    let url = spotify.search.base + '?';
     url += jsonToQueryStr(urlParams);
     return url;
 }
@@ -97,20 +102,20 @@ function getSearchUrl(query, isTypeahead) {
 function getSearchResults(url, token) {
     const options = getSearchOptions(url, token); 
 
-    log.debug("SpotifySearch.getSearchResults() -> " +
-              "Sending request to Spotify search API");
+    log.debug('SpotifySearch.getSearchResults() -> ' +
+              'Sending request to Spotify search API');
 
     return spotifyDao.request(options)
-    .then(response => {
-        if(response) 
-            return response;
-    })
-    .catch(error => {
-        log.debug("Unable to get search results from Spotify... " +
-                    "\nStatus code " + error.status);
+        .then(response => {
+            if(response) 
+            {return response;}
+        })
+        .catch(error => {
+            log.debug('Unable to get search results from Spotify... ' +
+                    '\nStatus code ' + error.status);
 
-        throw(error);
-    });
+            throw(error);
+        });
 }
 
 module.exports = SpotifySearchService;

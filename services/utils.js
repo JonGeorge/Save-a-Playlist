@@ -6,11 +6,11 @@ module.exports = {
      * @returns {string} a query string that can be appended to a URL.
      */
     jsonToQueryStr: (json) => {
-        let str = "";
+        let str = '';
 
         Object.keys(json).forEach((key, i, arr) => {
             str += `${key}=${json[key]}`;
-            str += i !== arr.length-1 ? "&" : "";
+            str += i !== arr.length-1 ? '&' : '';
         });
 
         return str;
@@ -23,8 +23,8 @@ module.exports = {
      * @returns string of random alpha-numeric characters
      */
     getRandomString: (length) => {
-        var str   = '';
-        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let str   = '';
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
         for (let i = 0; i < length; i++) {
             str += chars.charAt(Math.floor(Math.random() * chars.length));
@@ -35,7 +35,7 @@ module.exports = {
     getFormattedDateStr: (dateTimeStr) => {
         let date = new Date(dateTimeStr);
 
-        if(date == "Invalid Date") {
+        if(isNaN(date.getTime())) {
             date = new Date();
         }
         
@@ -45,4 +45,46 @@ module.exports = {
         
         return `${mm}/${dd}/${yyyy}`;
     },
-}
+
+    /**
+     * Parses cookies from request headers for serverless environment
+     * 
+     * @param {object} req - Express/Vercel request object
+     * @returns {object} Object with cookie name-value pairs
+     */
+    parseCookies: (req) => {
+        const cookies = {};
+        if (req.headers.cookie) {
+            req.headers.cookie.split(';').forEach(cookie => {
+                const parts = cookie.trim().split('=');
+                if (parts.length === 2) {
+                    cookies[parts[0]] = parts[1];
+                }
+            });
+        }
+        return cookies;
+    },
+
+    /**
+     * Parses request body from URL-encoded form data or JSON
+     * 
+     * @param {string|object} reqBody - Raw request body
+     * @returns {object} Parsed body object
+     */
+    parseRequestBody: (reqBody) => {
+        if (!reqBody) {
+            return {};
+        }
+        
+        if (typeof reqBody === 'string') {
+            const body = {};
+            const urlParams = new URLSearchParams(reqBody);
+            for (const [key, value] of urlParams) {
+                body[key] = value;
+            }
+            return body;
+        }
+        
+        return reqBody;
+    }
+};

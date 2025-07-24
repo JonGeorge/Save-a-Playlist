@@ -1,7 +1,8 @@
-const appConfig     = require("../config/app"),
-      spotifyConfig = require("../config/spotify"),
-      tokenService  = require("./token"),
-      { jsonToQueryStr, getRandomString } = require("./utils");
+const log = require('./log');
+const appConfig     = require('../config/app'),
+    spotifyConfig = require('../config/spotify'),
+    tokenService  = require('./token'),
+    { jsonToQueryStr, getRandomString } = require('./utils');
 
 const SpotifyLoginService = {
     /**
@@ -19,11 +20,11 @@ const SpotifyLoginService = {
      */
     getAuthUrlWithState: (host) => {
         const state     = getRandomString(32),
-              protocol  = appConfig.protocol,
-              path      = spotifyConfig.auth.redirectPath;
+            protocol  = appConfig.protocol,
+            path      = spotifyConfig.auth.redirectPath;
 
-        let options = spotifyConfig.auth.options,
-            url     = spotifyConfig.auth.base + "?";
+        const options = spotifyConfig.auth.options;
+        let url = spotifyConfig.auth.base + '?';
             
         options.state = state;
         options.redirect_uri = `${protocol}${host}${path}`;
@@ -40,18 +41,25 @@ const SpotifyLoginService = {
      * @param {string} code Authorization code received from Spotify.
      *                      If undefined or falsey, Client Credentials
      *                      flow is executed.
+     * @param {string} host The value of the host header received from the
+     *                      client's http request (used for redirect URI).
      * @returns Promise to complete an http request in an attempt to
      *          retrieve access and refresh tokens from Spotify.
      */
-    getAuthorizationCodeTokens: code => {
-        const options = tokenService.getTokenOptions(code);
+    getAuthorizationCodeTokens: (code, host) => {
+        // Build the redirect URI dynamically
+        const protocol = appConfig.protocol;
+        const path = spotifyConfig.auth.redirectPath;
+        const redirectUri = host ? `${protocol}${host}${path}` : spotifyConfig.auth.options.redirect_uri;
+        
+        const options = tokenService.getTokenOptions(code, redirectUri);
         
         return tokenService.getToken(options)
-        .then((token) => {
-            return token;
-        })
-        .catch(ex => console.error(ex));
-    },
+            .then((token) => {
+                return token;
+            })
+            .catch(ex => log.error('Authorization code error:', ex));
+    }
 };
 
 module.exports = SpotifyLoginService;
