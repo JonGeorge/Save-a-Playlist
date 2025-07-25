@@ -45,23 +45,80 @@
             newWindow.focus();
         }
 
-        // Check for "/success" in the newWindow URL and close the window if found
+        // Multiple methods to detect successful login
+        let loginCompleted = false;
+
+        // Method 1: Listen for localStorage events (cross-tab communication)
+        const storageListener = function(e) {
+            if (e.key === 'spotify-login-success' && !loginCompleted) {
+                loginCompleted = true;
+                handleLoginSuccess();
+            }
+        };
+        window.addEventListener('storage', storageListener);
+
+        // Method 2: Provide a callback function for the popup
+        window.spotifyLoginSuccess = function() {
+            if (!loginCompleted) {
+                loginCompleted = true;
+                handleLoginSuccess();
+            }
+        };
+
+        // Method 3: Poll window state and name (fallback)
         const pollTimer = window.setInterval(function() {
             try {
-                if(newWindow.document.URL.indexOf('/success') !== -1) {
+                if (newWindow.closed) {
                     window.clearInterval(pollTimer);
+                    window.removeEventListener('storage', storageListener);
+                    delete window.spotifyLoginSuccess;
+                    
+                    if (!loginCompleted) {
+                        // Window closed but we didn't detect success - refresh config
+                        setTimeout(refreshAuthState, 500);
+                    }
+                    return;
+                }
 
-                    window.config.isLoggedIn = true;
-                    displayConnectToSpotifyButton();
-
-                    // var url =   newWindow.document.URL;
-                    newWindow.close();
+                // Check window name for success flag
+                if (newWindow.name === 'spotify-login-success' && !loginCompleted) {
+                    loginCompleted = true;
+                    handleLoginSuccess();
                 }
             }
             catch(e) {
-                // Intentionally ignore errors when checking login window
+                // Intentionally ignore cross-origin errors
             }
-        }, 100);
+        }, 200);
+
+        function handleLoginSuccess() {
+            window.clearInterval(pollTimer);
+            window.removeEventListener('storage', storageListener);
+            delete window.spotifyLoginSuccess;
+            
+            if (newWindow && !newWindow.closed) {
+                newWindow.close();
+            }
+            
+            // Refresh auth state from server
+            refreshAuthState();
+        }
+
+        function refreshAuthState() {
+            // Fetch updated config from server
+            fetch('/api/getConfig')
+                .then(response => response.json())
+                .then(config => {
+                    window.config = config;
+                    displayConnectToSpotifyButton();
+                })
+                .catch(error => {
+                    console.error('Error refreshing auth state:', error);
+                    // Fallback: just update local state and refresh UI
+                    window.config.isLoggedIn = true;
+                    displayConnectToSpotifyButton();
+                });
+        }
     };
 
     if(window.config) { // Check if appConfig is loaded

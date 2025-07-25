@@ -31,7 +31,7 @@ function createUpdatedRequestOptions(options, accessToken) {
  * @throws {Error} When token refresh fails
  */
 function refreshAccessToken(refreshToken) {
-    const tokenService = require('../services/token');
+    const tokenService = require('../security/token');
     const options = tokenService.getRefreshTokenOptions(refreshToken);
 
     log.debug('Refreshing expired access token...');

@@ -1,8 +1,7 @@
-const spotifyService = require('../services/authorizationCode');
-const jwtService = require('../services/jwt');
 const log = require('../services/log');
 const config = require('../config/app');
 const { parseCookies } = require('../services/utils');
+const { auth, middleware } = require('../security');
 
 // ========================================
 // Helper Functions
@@ -17,7 +16,7 @@ function checkExistingAuth(cookies) {
         return { isValid: false };
     }
     
-    const decoded = jwtService.verifyToken(authToken);
+    const decoded = auth.jwt.verifyToken(authToken);
     if (decoded?.tokens?.access_token) {
         return { isValid: true, decoded };
     }
@@ -30,7 +29,7 @@ function checkExistingAuth(cookies) {
  */
 function generateSpotifyAuthUrl(req) {
     const host = req.headers.host || req.headers['x-forwarded-host'];
-    const { url, state } = spotifyService.getAuthUrlWithState(host);
+    const { url, state } = auth.authorizationCode.getAuthUrlWithState(host);
     
     return { authUrl: url, state };
 }
@@ -65,41 +64,43 @@ function createStateCookieOptions(stateToken) {
  * 4. Redirect user to Spotify authorization page
  */
 module.exports = async (req, res) => {
-    log.debug('Login API:', req.method);
+    return middleware.oauth(req, res, async () => {
+        log.debug('Login API:', req.method);
     
-    // Validate HTTP method
-    if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
-    }
-
-    try {
-        // Parse request data
-        const cookies = parseCookies(req);
-        
-        // Check for existing authentication
-        const { isValid } = checkExistingAuth(cookies);
-        if (isValid) {
-            log.debug('Existing valid token found, redirecting to app');
-            return res.redirect(config.redirect.onLoginSuccess);
+        // Validate HTTP method
+        if (req.method !== 'GET') {
+            return res.status(405).json({ error: 'Method not allowed' });
         }
+
+        try {
+        // Parse request data
+            const cookies = parseCookies(req);
         
-        log.debug('No valid token found, initiating Spotify OAuth flow');
+            // Check for existing authentication
+            const { isValid } = checkExistingAuth(cookies);
+            if (isValid) {
+                log.debug('Existing valid token found, redirecting to app');
+                return res.redirect(config.redirect.onLoginSuccess);
+            }
         
-        // Generate Spotify OAuth URL and state
-        const { authUrl, state } = generateSpotifyAuthUrl(req);
+            log.debug('No valid token found, initiating Spotify OAuth flow');
         
-        // Create and store state token for CSRF protection
-        const stateToken = jwtService.createStateToken(state);
-        const cookieOptions = createStateCookieOptions(stateToken);
+            // Generate Spotify OAuth URL and state
+            const { authUrl, state } = generateSpotifyAuthUrl(req);
         
-        res.setHeader('Set-Cookie', cookieOptions);
+            // Create and store state token for CSRF protection
+            const stateToken = auth.jwt.createStateToken(state);
+            const cookieOptions = createStateCookieOptions(stateToken);
         
-        // Redirect to Spotify authorization
-        log.debug('Redirecting to Spotify OAuth:', { url: authUrl });
-        res.redirect(authUrl);
+            res.setHeader('Set-Cookie', cookieOptions);
         
-    } catch (error) {
-        log.error('Login error:', error);
-        res.redirect(config.redirect.onError);
-    }
+            // Redirect to Spotify authorization
+            log.debug('Redirecting to Spotify OAuth:', { url: authUrl });
+            res.redirect(authUrl);
+        
+        } catch (error) {
+            log.error('Login error:', error);
+            res.redirect(config.redirect.onError);
+        }
+    });
 };
