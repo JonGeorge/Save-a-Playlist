@@ -43,6 +43,26 @@ const sessionPayload = auth.createUserSession(tokens, userId);
 const jwt = auth.jwt.generateToken(sessionPayload);
 ```
 
+### Input Sanitization
+
+```javascript
+const { sanitize } = require('./security');
+
+// Validate and sanitize search queries
+const result = sanitize.process.searchQuery(userInput);
+if (result.isValid) {
+    console.log('Sanitized query:', result.sanitized);
+} else {
+    console.log('Validation errors:', result.errors);
+}
+
+// Sanitize playlist names
+const cleanName = sanitize.sanitize.playlistName(playlistName);
+
+// Validate URLs
+const urlValidation = sanitize.validate.url(url, { requireSpotify: true });
+```
+
 ## Module Structure
 
 ### Core Modules
@@ -77,11 +97,18 @@ const jwt = auth.jwt.generateToken(sessionPayload);
 - Route type definitions
 - Security policy configurations
 
+**`sanitization/`** - Input sanitization and validation
+- `validator.js` - Input validation utilities
+- `sanitizer.js` - Data sanitization functions
+- `index.js` - Combined validation and sanitization interface
+- Protection against XSS, injection attacks, and malformed data
+
 **`tests/`** - Testing utilities
 - Comprehensive test suites
 - CSP validation
 - Header verification
 - Integration testing
+- Sanitization testing
 
 ## Usage Examples
 

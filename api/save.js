@@ -1,7 +1,7 @@
 const log = require('../services/log');
 const playlist = require('../services/playlist');
 const user = require('../services/user');
-const { auth } = require('../security');
+const { auth, sanitize } = require('../security');
 const config = require('../config/app');
 const { getFormattedDateStr, parseCookies, parseRequestBody } = require('../services/utils');
 const { middleware } = require('../security');
@@ -34,14 +34,36 @@ async function updateJwtWithUserId(res, decoded, token) {
  */
 function createPlaylistDetails(body) {
     const { tracksUrl, name, dateTimeStr } = body;
+    
+    // Validate and sanitize playlist name
+    const nameResult = sanitize.process.playlistName(decodeURIComponent(name || ''), {
+        maxLength: 100,
+        allowEmpty: false
+    });
+    
+    if (!nameResult.isValid) {
+        throw new Error(`Invalid playlist name: ${nameResult.errors.join(', ')}`);
+    }
+    
+    // Validate and sanitize tracks URL
+    const urlResult = sanitize.process.url(tracksUrl || '', {
+        requireSpotify: true,
+        allowEmpty: false
+    });
+    
+    if (!urlResult.isValid) {
+        throw new Error(`Invalid tracks URL: ${urlResult.errors.join(', ')}`);
+    }
+    
     const date = getFormattedDateStr(dateTimeStr);
-    const playlistName = decodeURIComponent(name);
+    const sanitizedPlaylistName = nameResult.sanitized;
+    const sanitizedTracksUrl = urlResult.sanitized;
 
     return {
-        name: `${playlistName} - Saved on ${date}`,
-        description: `This playlist was copied from "${playlistName}" on ${date}.`,
+        name: `${sanitizedPlaylistName} - Saved on ${date}`,
+        description: `This playlist was copied from "${sanitizedPlaylistName}" on ${date}.`,
         public: false,
-        tracks: tracksUrl
+        tracks: sanitizedTracksUrl
     };
 }
 
@@ -95,10 +117,15 @@ module.exports = async (req, res) => {
                 return res.status(401).json({ status: 401, message: 'No valid Spotify token' });
             }
 
-            // Create the playlist
-            log.debug('Creating playlist:', { name: decodeURIComponent(body.name), userId });
+            // Create the playlist with sanitized data
+            log.debug('Creating playlist:', { originalName: body.name, userId });
 
             const playlistDetails = createPlaylistDetails(body);
+            log.debug('Sanitized playlist details:', { 
+                name: playlistDetails.name, 
+                tracks: playlistDetails.tracks 
+            });
+            
             const response = await playlist.createPlaylistFromTracks(userId, decoded.tokens, playlistDetails);
 
             // Return success or failure response
@@ -110,6 +137,12 @@ module.exports = async (req, res) => {
 
         }
         catch (error) {
+            // Handle validation errors specifically
+            if (error.message.includes('Invalid playlist name') || error.message.includes('Invalid tracks URL')) {
+                log.debug('Save validation error:', error.message);
+                return res.status(400).json({ status: 400, message: error.message });
+            }
+            
             log.error('Error in save endpoint:', error.message);
             log.error('Stack trace:', error.stack);
             res.status(500).json({ status: 500, message: `Internal server error: ${error.message}` });
