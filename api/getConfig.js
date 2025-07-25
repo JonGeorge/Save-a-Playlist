@@ -1,9 +1,8 @@
 const log = require('../services/log');
 const frontendConfig = require('../config/frontend');
-const { auth } = require('../security');
+const { auth, middleware } = require('../security');
 const config = require('../config/app');
 const { parseCookies } = require('../services/utils');
-const { middleware } = require('../security');
 
 module.exports = async (req, res) => {
     return middleware.api.config(req, res, async () => {

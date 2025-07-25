@@ -1,10 +1,9 @@
 const log = require('../services/log');
 const playlist = require('../services/playlist');
 const user = require('../services/user');
-const { auth, sanitize } = require('../security');
+const { auth, sanitize, middleware } = require('../security');
 const config = require('../config/app');
 const { getFormattedDateStr, parseCookies, parseRequestBody } = require('../services/utils');
-const { middleware } = require('../security');
 
 
 /**
