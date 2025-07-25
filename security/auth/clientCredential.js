@@ -1,5 +1,5 @@
-const spotify            = require('../config/spotify'),
-    log                = require('../services/log'),
+const spotify            = require('../../config/spotify'),
+    log                = require('../../services/log'),
     tokenService       = require('./token');
 
 

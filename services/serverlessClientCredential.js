@@ -1,6 +1,6 @@
 const spotify = require('../config/spotify');
 const log = require('../services/log');
-const tokenService = require('../security/token');
+const tokenService = require('../security/auth/token');
 
 // In-memory token cache for serverless (temporary solution)
 // In production, you might want to use Vercel KV or another storage solution
