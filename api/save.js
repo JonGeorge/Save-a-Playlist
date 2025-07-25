@@ -1,7 +1,7 @@
 const log = require('../services/log');
 const playlist = require('../services/playlist');
 const user = require('../services/user');
-const jwtService = require('../services/jwt');
+const jwtService = require('../security/jwt');
 const config = require('../config/app');
 const { getFormattedDateStr, parseCookies, parseRequestBody } = require('../services/utils');
 

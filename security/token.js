@@ -1,7 +1,7 @@
 const spotifyDao = require('../dao/spotify'),
     spotifyConfig = require('../config/spotify'),
     log = require('../services/log'),
-    { jsonToQueryStr } = require('./utils');
+    { jsonToQueryStr } = require('../services/utils');
 
 const SpotifyTokenService = {
     /**

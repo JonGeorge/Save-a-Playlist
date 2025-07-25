@@ -1,5 +1,5 @@
-const spotifyService = require('../../services/authorizationCode');
-const jwtService = require('../../services/jwt');
+const spotifyService = require('../../security/authorizationCode');
+const jwtService = require('../../security/jwt');
 const log = require('../../services/log');
 const config = require('../../config/app');
 const { parseCookies } = require('../../services/utils');

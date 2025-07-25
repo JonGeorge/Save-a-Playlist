@@ -1,6 +1,6 @@
 const log = require('../services/log');
 const frontendConfig = require('../config/frontend');
-const jwtService = require('../services/jwt');
+const jwtService = require('../security/jwt');
 const config = require('../config/app');
 const { parseCookies } = require('../services/utils');
 
