@@ -72,10 +72,11 @@
                     window.clearInterval(pollTimer);
                     window.removeEventListener('storage', storageListener);
                     delete window.spotifyLoginSuccess;
-                    
+
                     if (!loginCompleted) {
-                        // Window closed but we didn't detect success - refresh config
-                        setTimeout(refreshAuthState, 500);
+                        // Window closed but we didn't detect success - just clean up, don't refresh
+                        // User cancelled authentication, no need to update UI
+                        // console.log('OAuth popup closed without authentication');
                     }
                     return;
                 }
@@ -95,11 +96,11 @@
             window.clearInterval(pollTimer);
             window.removeEventListener('storage', storageListener);
             delete window.spotifyLoginSuccess;
-            
+
             if (newWindow && !newWindow.closed) {
                 newWindow.close();
             }
-            
+
             // Refresh auth state from server
             refreshAuthState();
         }
@@ -145,8 +146,12 @@
         }
         // Current session is not logged in
         else {
-            const rightHeader = document.getElementsByClassName('right-header')[0];
-            rightHeader.appendChild(getConnectToSpotifyBtn());
+            // Check if Connect to Spotify button already exists
+            const existingBtn = document.getElementById('login');
+            if (!existingBtn) {
+                const rightHeader = document.getElementsByClassName('right-header')[0];
+                rightHeader.appendChild(getConnectToSpotifyBtn());
+            }
         }
     }
     else { // Config hasn't loaded yet, try again
