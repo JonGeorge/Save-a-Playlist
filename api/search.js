@@ -1,9 +1,8 @@
 const spotifyService = require('../services/search');
-const { auth, sanitize } = require('../security');
+const { auth, sanitize, middleware } = require('../security');
 const config = require('../config/app');
 const log = require('../services/log');
 const { parseCookies } = require('../services/utils');
-const { middleware } = require('../security');
 
 /**
  * Parses and validates search parameters from request
