@@ -1,5 +1,5 @@
 const spotifyService = require('../services/search');
-const { auth } = require('../security');
+const { auth, sanitize } = require('../security');
 const config = require('../config/app');
 const log = require('../services/log');
 const { parseCookies } = require('../services/utils');
@@ -10,10 +10,31 @@ const { middleware } = require('../security');
  */
 function parseSearchParams(req) {
     const url = new URL(req.url, `http://${req.headers.host}`);
-    const query = url.searchParams.get('q');
-    const isTypeahead = url.searchParams.get('typeahead') === 'true';
+    const rawQuery = url.searchParams.get('q');
+    const rawTypeahead = url.searchParams.get('typeahead');
 
-    return { query, isTypeahead };
+    // Validate and sanitize query parameter
+    const queryResult = sanitize.process.searchQuery(rawQuery || '', {
+        maxLength: 200,
+        allowEmpty: false
+    });
+
+    if (!queryResult.isValid) {
+        throw new Error(`Invalid search query: ${queryResult.errors.join(', ')}`);
+    }
+
+    // Validate typeahead parameter
+    const typeaheadResult = sanitize.validate.boolean(rawTypeahead);
+    const isTypeahead = rawTypeahead === 'true';
+
+    return { 
+        query: queryResult.sanitized, 
+        isTypeahead,
+        validation: {
+            query: queryResult,
+            typeahead: typeaheadResult
+        }
+    };
 }
 
 /**
@@ -59,14 +80,9 @@ module.exports = async (req, res) => {
         try {
         // Parse request data
             const cookies = parseCookies(req);
-            const { query, isTypeahead } = parseSearchParams(req);
+            const { query, isTypeahead, validation } = parseSearchParams(req);
 
-            // Validate required parameters
-            if (!query || query.trim() === '') {
-                return res.status(400).json(createErrorResponse('Search query is required'));
-            }
-
-            log.debug('Search request:', { query, isTypeahead });
+            log.debug('Search request:', { query, isTypeahead, validation });
 
             // Extract user token (optional - falls back to client credentials)
             const userToken = extractUserToken(cookies);
@@ -81,6 +97,12 @@ module.exports = async (req, res) => {
             res.status(200).json(result);
 
         } catch (error) {
+            // Handle validation errors specifically
+            if (error.message.includes('Invalid search query')) {
+                log.debug('Search validation error:', error.message);
+                return res.status(400).json(createErrorResponse(error.message));
+            }
+            
             log.error('Search error:', error);
             res.status(500).json(createErrorResponse('Search failed'));
         }

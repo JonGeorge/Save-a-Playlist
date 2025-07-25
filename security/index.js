@@ -34,6 +34,9 @@ const csp = require('./headers/csp');
 // Test utilities
 const tests = require('./tests');
 
+// Sanitization utilities
+const sanitization = require('./sanitization');
+
 /**
  * Pre-configured security middleware for common use cases
  */
@@ -90,6 +93,23 @@ const testing = {
 };
 
 /**
+ * Input sanitization and validation utilities
+ */
+const sanitize = {
+    // Validation functions
+    validate: sanitization.validate,
+    
+    // Sanitization functions
+    sanitize: sanitization.sanitize,
+    
+    // Combined processing
+    process: sanitization.process,
+    
+    // Middleware creation
+    createMiddleware: sanitization.createMiddleware
+};
+
+/**
  * Main security interface
  */
 const security = {
@@ -101,6 +121,9 @@ const security = {
     
     // Authentication services
     auth,
+    
+    // Input sanitization and validation
+    sanitize,
     
     // Configuration
     config: configuration,
@@ -114,7 +137,7 @@ const security = {
     isDevelopment: config.isDevelopment,
     
     // Version info
-    version: '1.0.0',
+    version: '1.1.0',
     description: 'Comprehensive security module for Spotify playlist application'
 };
 
@@ -125,6 +148,7 @@ module.exports = security;
 module.exports.middleware = middleware;
 module.exports.headers = headers;
 module.exports.auth = auth;
+module.exports.sanitize = sanitize;
 module.exports.config = configuration;
 module.exports.test = testing;
 module.exports.createMiddleware = createSecurityMiddleware;
