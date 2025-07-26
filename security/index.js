@@ -31,8 +31,12 @@ const { createStandardHelmet, createOAuthHelmet } = require('./headers/helmet');
 const { createManualSecurityMiddleware } = require('./headers/manual');
 const csp = require('./headers/csp');
 
-// Test utilities
-const tests = require('./tests');
+// Test utilities - lazy load to avoid circular dependencies
+const tests = {
+    get runAll() { return require('./tests').runAllSecurityTests; },
+    get runQuick() { return require('./tests').runQuickSecurityCheck; },
+    get individual() { return require('./tests').tests; }
+};
 
 // Sanitization utilities
 const sanitization = require('./sanitization');

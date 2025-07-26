@@ -181,8 +181,6 @@ function testIntegratedMiddleware() {
                 }
             });
 
-            // Note: Rate limiting removed for serverless compatibility
-            console.log('ℹ Rate limiting not tested (removed for serverless compatibility)');
 
             // Check for security headers
             if (res.headers['X-Content-Type-Options']) {
