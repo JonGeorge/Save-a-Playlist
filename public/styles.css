@@ -18,6 +18,18 @@ body {
     min-height: 100%;
 }
 
+@media only screen and (min-width: 480px) {
+    #body-content {
+        padding: 35px 20px;
+    }
+}
+
+@media only screen and (min-width: 960px) {
+    #body-content {
+        padding: 35px 90px;
+    }
+}
+
 @media only screen and (min-width: 1200px) {
     #body-content {
         padding: 35px 130px;
@@ -27,21 +39,32 @@ body {
 header {
     font-size: 1rem;
     font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media only screen and (min-width: 480px) {
+    header {
+        flex-direction: row;
+    }
 }
 
 header a > span {
-    position: relative;
-    bottom: 15px;
+    margin-left: 8px;
 }
 
 header .left-header {
-    color: #07AB00;
-    display: inline-block;
+    color: #047857;
+    display: flex;
+    align-items: center;
 }
 
 header .right-header {
-    float: right;
-    display: inline-block;
+    display: flex;
+    align-items: center;
 }
 
 .playlist-icon {
@@ -52,36 +75,56 @@ header .right-header {
 .logo {
     color: inherit;
     text-decoration: none;
+    display: flex;
+    align-items: center;
 }
 
 #login {
-    background-color: #07AB00;
-    border-radius: 10px;
+    background-color: #047857;
+    border: 2px solid #047857;
+    border-radius: 8px;
     color: #FFFFFF;
     cursor: pointer;
-    padding: 11px 11px;
-    position: relative;
-    top: 12px;
+    padding: 12px 20px;
     text-decoration: none;
     font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(4, 120, 87, 0.2);
+}
+
+#login:hover {
+    background-color: #064e3b;
+    border-color: #064e3b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(4, 120, 87, 0.3);
+}
+
+#login:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(4, 120, 87, 0.2);
+}
+
+#login:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.3);
 }
 
 @media only screen and (min-width: 680px) {
     #login {
-        padding: 12px 22px;
+        padding: 14px 24px;
         font-size: 1rem;
     }
 }
 
 .connected-text {
-    position: relative;
-    top: 6px;
-    color: #07AB00;
+    color: #047857;
+    display: flex;
+    align-items: center;
 }
 
-.checkmark{
-    position: absolute;
-    right: 162px;
+.checkmark {
+    margin-right: 8px;
 }
 
 main {
@@ -97,6 +140,13 @@ h1 {
     font-size: 1.75rem;
 }
 
+@media only screen and (min-width: 480px) {
+    h1 {
+        font-size: 1.9rem;
+        margin-top: 70px;
+    }
+}
+
 @media only screen and (min-width: 680px) {
     h1 {
         font-size: 2rem;
@@ -107,6 +157,13 @@ h1 {
 h3 {
     font-size: 1.1rem;
     margin-top: 25px;
+    line-height: 1.4;
+}
+
+@media only screen and (min-width: 480px) {
+    h3 {
+        font-size: 1.05rem;
+    }
 }
 
 @media only screen and (min-width: 680px) {
@@ -124,16 +181,21 @@ h3 {
 #search-input {
     width: 95%;
     border: none;
-    border-bottom: 1px solid black;
+    border-bottom: 2px solid #d1d5db;
     padding: 11px 0;
     font-family: 'europa', sans-serif;
     font-size: 1rem;
     margin-top: 36px;
     margin-bottom: 75px;
     outline: none;
-    background-image: url("/public/resources/search.svg");
+    background-image: url("./resources/search.svg");
     background-repeat: no-repeat;
     background-position: 99% 10px;
+    transition: border-color 0.5s ease;
+}
+
+#search-input:focus {
+    border-bottom-color: #047857;
 }
 
 @media only screen and (min-width: 1200px) {
@@ -154,10 +216,19 @@ h3 {
 }
 
 #search-results > ul > li {
-    border-bottom: 1px solid #DBDBDB;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
-    margin-bottom: 30px;
-    padding-bottom: 30px;
+    margin-bottom: 24px;
+    padding: 20px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+#search-results > ul > li:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
 }
 
 #search-results > ul > li:last-child {
@@ -167,7 +238,11 @@ h3 {
 .playlist-img {
     align-self: flex-start;
     width: 70px;
-    margin-right: 35px;
+    margin-right: 24px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 @media only screen and (min-width: 680px) {
@@ -184,6 +259,13 @@ h3 {
     text-decoration: none;
     color: inherit;
     font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+@media only screen and (min-width: 480px) {
+    .playlist-info-text {
+        font-size: 0.94rem;
+    }
 }
 
 @media only screen and (min-width: 680px) {
@@ -198,21 +280,39 @@ h3 {
     cursor: pointer;
     width: 45px;
     float: right;
-    padding: 0 42px;
+    padding: 8px 42px;
     text-align: center;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.add-btn:hover {
+    background-color: #f8faf9;
+    transform: scale(1.03);
+}
+
+.add-btn:active {
+    transform: scale(0.95);
 }
 
 .save-btn-icon {
     font-size: 36px;
     line-height: 0;
-    color: #07AB00;
+    color: #047857;
     position: relative;
     top: 2px;
+    transition: color 0.2s ease;
 }
 
 .save-btn-text {
     font-size: 12px;
-    color: #07AB00;
+    color: #047857;
+    transition: color 0.2s ease;
+}
+
+.add-btn:hover .save-btn-icon,
+.add-btn:hover .save-btn-text {
+    color: #059669;
 }
 
 .error-btn {
@@ -227,7 +327,7 @@ h3 {
     display: block;
     font-size: 24px;
     line-height: 0;
-    color: #D32F2F;
+    color: #dc2626;
     position: relative;
     top: 2px;
     margin: 0 auto;
@@ -235,7 +335,7 @@ h3 {
 
 .error-btn-text {
     font-size: 12px;
-    color: #D32F2F;
+    color: #dc2626;
     white-space: pre;
 }
 
@@ -249,23 +349,23 @@ h3 {
     align-self: center;
     width: 125px;
     text-align: center;
-    color: #07AB00;
+    color: #047857;
 }
 
 footer {
     height: 50px;
-    background-color: #07AB00;
+    background-color: #064e3b;
     position: absolute;
     bottom: 0;
     width: 100%;
-    min-width: 320px;
+    min-width: 340px; /* 320px + 10px padding each side */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 footer .footer-content {
-    text-align: center;
     color: white;
     font-size: 14px;
     font-family: europa, sans-serif;
-    position: relative;
-    top: 14px;
 }
