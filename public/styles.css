@@ -12,15 +12,15 @@ body {
     background-color: white;
     font-family: europa, sans-serif;
     max-width: 1200px;
-    min-width: 380px;
-    padding: 35px 30px;
+    min-width: 320px;
+    padding: 35px 10px;
     margin: 0 auto;
     min-height: 100%;
 }
 
 @media only screen and (min-width: 1200px) {
     #body-content {
-        padding: 35px 150px;
+        padding: 35px 130px;
     }
 }
 
@@ -258,6 +258,7 @@ footer {
     position: absolute;
     bottom: 0;
     width: 100%;
+    min-width: 320px;
 }
 
 footer .footer-content {
