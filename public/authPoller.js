@@ -19,7 +19,7 @@
 
         // Check if we have recent cached auth state
         if (window.config && window.authStateTimestamp && (now - window.authStateTimestamp) < cacheAge) {
-            console.log('Using cached auth state, age:', Math.round((now - window.authStateTimestamp) / 1000), 'seconds');
+            // console.log('Using cached auth state, age:', Math.round((now - window.authStateTimestamp) / 1000), 'seconds');
             return Promise.resolve(window.config.isLoggedIn);
         }
 

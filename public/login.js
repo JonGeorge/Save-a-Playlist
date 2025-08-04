@@ -76,7 +76,7 @@ function displayConnectToSpotifyButton() {
 
                     if (!loginCompleted) {
                         // Window closed but we didn't detect success - start polling server
-                        console.log('Popup closed, starting direct auth polling...');
+                        // console.log('Popup closed, starting direct auth polling...');
                         startDirectAuthPolling();
                     }
                     return;
@@ -105,7 +105,7 @@ function displayConnectToSpotifyButton() {
                         window.config = config;
                         if (config.isLoggedIn && !loginCompleted) {
                             loginCompleted = true;
-                            console.log('Login detected via direct polling');
+                            // console.log('Login detected via direct polling');
                             // Reset auth cache timestamp since we just got fresh data
                             window.authStateTimestamp = Date.now();
                             displayConnectToSpotifyButton();
