@@ -1,95 +1,54 @@
-# Save a playlist
+## Welcome to Save a Playlist
 
-[Saveaplaylist.com](https://saveaplaylist.com) allows you to take a snapshot of 
-Spotify playlists.
+Save a Playlist helps you preserve Spotify playlists in your personal library. Whether it's a playlist that might change or disappear, or you just want to keep a copy for yourself, our tool makes it simple to save any Spotify playlist permanently to your account.
 
-## Background
+## Getting Started
 
-Many Spotify users have expressed interest in the ability 
-to opt-out of playlist updates, however, [this is not a feature Spotify 
-offers.](https://support.spotify.com/us/article/save-recover-playlists/) 
-What does this mean? A playlist you've had on repeat for the last 
-two weeks can be changed or removed at any time at the discretion of the playlist owner. 
+### 1. Connect to Spotify
 
-Sometimes having songs removed from or added to a playlist is refreshing; a change in the order of your playlists' songs is welcomed.
+Before you can save playlists, you need to connect your Spotify account:
 
-For the times when playlist changes are not welcomed, you can use saveaplaylist.com to capture the current state of a playlist for future enjoyment.
+1. **Visit the website**: Go to [saveaplaylist.com](https://saveaplaylist.com)
+2. **Click "Connect to Spotify"**: You'll see this button in the top-right corner
+3. **Authorize the app**: A popup window will open asking you to log in to Spotify and grant permissions
+4. **Grant permissions**: Click "Agree" to allow Save a Playlist to:
+   - Create playlists in your library
+   - Modify your playlists (to add saved content)
 
-Some playlists are perfect the way they are!
+> **Note**: We only request the minimum permissions needed to save playlists. We cannot see your private data or modify existing playlists without your explicit action.
 
-## How it works
+### 2. Successful Connection
 
-It's simple. We use the Spotify API to:
+Once connected, you'll see:
+- The button changes to "Connected to Spotify" with a green checkmark ✓
+- The popup window closes automatically
+- You're ready to start saving playlists!
 
-1. Search for existing playlists.
-2. Create a new playlist in your account, owned by you.
-3. Add each song from the playlist you want to save to your new playlist.
+## Saving Playlists
 
-These steps are [Spotify's recommended method](https://support.spotify.com/us/article/save-recover-playlists/) to save a playlist, we've just 
-automated it. 🤓
+### How to Save a Playlist
 
-## Run Save-a-playlist locally
+1. **Search for a playlist**: Use the search box to find the playlist you want to save
+   - Type at least 3 characters to start searching
+   - Search results will appear as you type
 
-### Prerequisites
-- Node.js (version 14 or higher)
-- Vercel CLI: `npm install -g vercel`
+2. **Choose your playlist**: Click on the playlist you want from the search results
 
-### Setup Steps
+3. **Save to your library**: Click the "+" (plus) button next to the playlist
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/JonGeorge/Save-a-Playlist.git
-   cd Save-a-Playlist
-   ```
+### What Gets Saved
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+When you save a playlist:
+- **All songs**: Every track from the original playlist is copied
+- **Same order**: Songs maintain their original sequence
+- **Your ownership**: The new playlist belongs to you and won't change when the original does
+- **Complete independence**: Your saved playlist is separate from the original
 
-3. **Create environment file**
-   Create a `.env` file in the project root with the following variables:
-   ```bash
-   # Set to true for verbose application logging
-   DEBUG=true
-   
-   # Development port (default: 3001)
-   PORT=3001
-   
-   # Protocol for OAuth redirects (use "http://" for local dev)
-   PROTOCOL=http://
-   
-   # Spotify API credentials (get from https://developer.spotify.com/)
-   CLIENT_ID=your_spotify_client_id
-   CLIENT_SECRET=your_spotify_client_secret
-   
-   # JWT signing secret (generate a random secure string)
-   JWT_SECRET=your_random_jwt_secret
-   ```
+## Common Use Cases
 
-4. **Configure Spotify App**
-   - Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-   - Create a new app or use an existing one
-   - Add `http://localhost:3001/login/callback` to your app's redirect URIs
+### Why Save Playlists?
 
-5. **Start the development server**
-   ```bash
-   vercel dev --listen 3001
-   ```
-
-The application will be available at `http://localhost:3001`
-
-### Development Commands
-```bash
-# Start development server
-vercel dev --listen 3001
-
-# Run linter
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
-
-# Build for production
-npm run build
-```
+1. **Preserve changing playlists**: Some playlists are updated regularly
+2. **Backup favorites**: Keep copies of playlists that might be deleted
+3. **Personalize**: Create your own version with a custom name
+4. **Share safely**: Save playlists before sharing so the original stays intact
