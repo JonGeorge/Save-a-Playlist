@@ -38,28 +38,27 @@ module.exports = async (req, res) => {
             if (window.opener && !window.opener.closed) {
                 // Set a flag that parent can check
                 window.name = 'spotify-login-success';
-                
+
                 // Try to call parent function if available
                 if (window.opener.spotifyLoginSuccess) {
                     window.opener.spotifyLoginSuccess();
                 }
-                
+
                 // Also try to trigger a storage event for cross-tab communication
                 localStorage.setItem('spotify-login-success', Date.now().toString());
-                localStorage.removeItem('spotify-login-success');
             }
         } catch (e) {
             console.log('Could not communicate with parent window:', e);
         }
-        
-        // Close the window after a brief delay
+
+        // Close the window after a delay
         setTimeout(function() {
             window.close();
-        }, 1500);
+        }, 700);
     </script>
 </body>
 </html>`;
-        
+
         res.setHeader('Content-Type', 'text/html');
         res.status(200).send(successHtml);
     });

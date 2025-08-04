@@ -1,4 +1,4 @@
-(function displayConnectToSpotifyButton() {
+function displayConnectToSpotifyButton() {
 
     const getCheckIcon = function() {
         const checkIcon = document.createElement('img');
@@ -57,13 +57,15 @@
         };
         window.addEventListener('storage', storageListener);
 
-        // Method 2: Provide a callback function for the popup
-        window.spotifyLoginSuccess = function() {
-            if (!loginCompleted) {
-                loginCompleted = true;
-                handleLoginSuccess();
-            }
-        };
+        // Method 2: Provide a callback function for the popup (now global)
+        if (!window.spotifyLoginSuccess) {
+            window.spotifyLoginSuccess = function() {
+                if (!loginCompleted) {
+                    loginCompleted = true;
+                    handleLoginSuccess();
+                }
+            };
+        }
 
         // Method 3: Poll window state and name (fallback)
         const pollTimer = window.setInterval(function() {
@@ -71,12 +73,11 @@
                 if (newWindow.closed) {
                     window.clearInterval(pollTimer);
                     window.removeEventListener('storage', storageListener);
-                    delete window.spotifyLoginSuccess;
 
                     if (!loginCompleted) {
-                        // Window closed but we didn't detect success - just clean up, don't refresh
-                        // User cancelled authentication, no need to update UI
-                        // console.log('OAuth popup closed without authentication');
+                        // Window closed but we didn't detect success - start polling server
+                        console.log('Popup closed, starting direct auth polling...');
+                        startDirectAuthPolling();
                     }
                     return;
                 }
@@ -90,16 +91,57 @@
             catch(e) {
                 // Intentionally ignore cross-origin errors
             }
-        }, 200);
+        }, 100);
+
+        // Direct polling fallback when popup closes without detection
+        function startDirectAuthPolling() {
+            let pollCount = 0;
+            const maxPolls = 20; // Poll for 10 seconds
+
+            function pollAuthStatus() {
+                fetch('/api/getConfig')
+                    .then(response => response.json())
+                    .then(config => {
+                        window.config = config;
+                        if (config.isLoggedIn && !loginCompleted) {
+                            loginCompleted = true;
+                            console.log('Login detected via direct polling');
+                            // Reset auth cache timestamp since we just got fresh data
+                            window.authStateTimestamp = Date.now();
+                            displayConnectToSpotifyButton();
+                            return;
+                        }
+
+                        pollCount++;
+                        if (pollCount < maxPolls) {
+                            setTimeout(pollAuthStatus, 500);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Auth polling failed:', error);
+                        pollCount++;
+                        if (pollCount < maxPolls) {
+                            setTimeout(pollAuthStatus, 500);
+                        }
+                    });
+            }
+
+            // Start polling after a brief delay
+            setTimeout(pollAuthStatus, 500);
+        }
 
         function handleLoginSuccess() {
             window.clearInterval(pollTimer);
             window.removeEventListener('storage', storageListener);
-            delete window.spotifyLoginSuccess;
+            // Don't delete global callback, other popups might need it
 
             if (newWindow && !newWindow.closed) {
                 newWindow.close();
             }
+
+            // Signal successful login to other parts of the app
+            localStorage.setItem('spotify-login-success', Date.now().toString());
+            // localStorage.removeItem('spotify-login-success');
 
             // Refresh auth state from server
             refreshAuthState();
@@ -111,12 +153,14 @@
                 .then(response => response.json())
                 .then(config => {
                     window.config = config;
+                    window.authStateTimestamp = Date.now();
                     displayConnectToSpotifyButton();
                 })
                 .catch(error => {
                     console.error('Error refreshing auth state:', error);
                     // Fallback: just update local state and refresh UI
                     window.config.isLoggedIn = true;
+                    window.authStateTimestamp = Date.now();
                     displayConnectToSpotifyButton();
                 });
         }
@@ -152,9 +196,20 @@
                 const rightHeader = document.getElementsByClassName('right-header')[0];
                 rightHeader.appendChild(getConnectToSpotifyBtn());
             }
+            else {
+              const connectToSpotifyBtn = document.getElementById('login');
+              const parent = connectToSpotifyBtn.parentNode;
+              parent.replaceChild(getConnectToSpotifyBtn(), connectToSpotifyBtn);
+            }
         }
     }
     else { // Config hasn't loaded yet, try again
         setTimeout(displayConnectToSpotifyButton, 50);
     }
-})();
+}
+
+// Make the function globally accessible
+window.displayConnectToSpotifyButton = displayConnectToSpotifyButton;
+
+// Call it initially
+displayConnectToSpotifyButton();
