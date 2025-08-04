@@ -38,12 +38,6 @@ Once connected, you'll see:
 
 3. **Save to your library**: Click the "+" (plus) button next to the playlist
 
-4. **Name your saved playlist**: Enter a name for the playlist in your library
-   - Default name will be the original playlist name
-   - You can customize it to anything you prefer
-
-5. **Confirm**: Click "Save" to add the playlist to your Spotify library
-
 ### What Gets Saved
 
 When you save a playlist:
