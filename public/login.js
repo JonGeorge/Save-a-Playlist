@@ -96,7 +96,7 @@ function displayConnectToSpotifyButton() {
         // Direct polling fallback when popup closes without detection
         function startDirectAuthPolling() {
             let pollCount = 0;
-            const maxPolls = 20; // Poll for 10 seconds
+            const maxPolls = 5; // Poll for 2.5 seconds
 
             function pollAuthStatus() {
                 fetch('/api/getConfig')
