@@ -45,124 +45,108 @@ function displayConnectToSpotifyButton() {
             newWindow.focus();
         }
 
-        // Multiple methods to detect successful login
-        let loginCompleted = false;
-
-        // Method 1: Listen for localStorage events (cross-tab communication)
-        const storageListener = function(e) {
-            if (e.key === 'spotify-login-success' && !loginCompleted) {
-                loginCompleted = true;
-                handleLoginSuccess();
-            }
-        };
-        window.addEventListener('storage', storageListener);
-
-        // Method 2: Provide a callback function for the popup (now global)
-        if (!window.spotifyLoginSuccess) {
-            window.spotifyLoginSuccess = function() {
-                if (!loginCompleted) {
-                    loginCompleted = true;
-                    handleLoginSuccess();
-                }
-            };
+        // Reset login success processing flag for new attempt
+        if (window.authPoller && window.authPoller.resetLoginProcessing) {
+            window.authPoller.resetLoginProcessing();
         }
 
-        // Method 3: Poll window state and name (fallback)
-        const pollTimer = window.setInterval(function() {
-            try {
-                if (newWindow.closed) {
-                    window.clearInterval(pollTimer);
-                    window.removeEventListener('storage', storageListener);
+        // Store login state globally for the centralized handler to access
+        window.loginState = {
+            popup: newWindow,
+            completed: false,
+            pollTimer: null,
+            storageListener: null,
+            messageListener: null
+        };
 
-                    if (!loginCompleted) {
-                        // Window closed but we didn't detect success - start polling server
-                        // console.log('Popup closed, starting direct auth polling...');
+        // Method 1: Listen for localStorage events (cross-tab communication)
+        window.loginState.storageListener = function(e) {
+            if (e.key === 'spotify-login-success' && !window.loginState.completed) {
+                window.authPoller.handleLoginSuccess('popup-localStorage');
+            }
+        };
+        window.addEventListener('storage', window.loginState.storageListener);
+
+        // Method 2: Listen for PostMessage events as backup for localStorage
+        window.loginState.messageListener = function(e) {
+            if (e.data && e.data.type === 'spotify-login-success' && !window.loginState.completed) {
+                window.authPoller.handleLoginSuccess('popup-postMessage');
+            }
+        };
+        window.addEventListener('message', window.loginState.messageListener);
+
+        // Method 3: Poll window state, name, and localStorage (enhanced detection)
+        window.loginState.pollTimer = window.setInterval(function() {
+            try {
+                // Check if window is closed
+                if (newWindow.closed) {
+                    window.clearInterval(window.loginState.pollTimer);
+
+                    // Check localStorage for success flag before falling back to server polling
+                    const loginSuccess = localStorage.getItem('spotify-login-success');
+                    const loginTimestamp = localStorage.getItem('spotify-login-timestamp');
+                    const now = Date.now();
+
+                    // If we find a recent login success flag, consider it successful
+                    if (loginSuccess && loginTimestamp && (now - parseInt(loginTimestamp)) < 60000) { // Within 1 minute
+                        // console.log('Popup closed - found localStorage success flag');
+                        window.authPoller.handleLoginSuccess('popup-localStorage-closed');
+                        return;
+                    }
+
+                    if (!window.loginState.completed) {
+                        // Window closed but we didn't detect success - cleanup and start polling server
+                        // console.log('Popup closed without login completion, cleaning up oauth_state cookie...');
+                        clearOAuthState();
+                        // console.log('Starting direct auth polling...');
                         startDirectAuthPolling();
                     }
                     return;
                 }
 
                 // Check window name for success flag
-                if (newWindow.name === 'spotify-login-success' && !loginCompleted) {
-                    loginCompleted = true;
-                    handleLoginSuccess();
+                if (newWindow.name === 'spotify-login-success' && !window.loginState.completed) {
+                    // console.log('Detected success via window.name');
+                    window.authPoller.handleLoginSuccess('popup-windowName');
+                }
+
+                // Also check localStorage periodically while popup is open
+                const loginSuccess = localStorage.getItem('spotify-login-success');
+                if (loginSuccess && !window.loginState.completed) {
+                    const timestamp = localStorage.getItem('spotify-login-timestamp');
+                    if (timestamp && (Date.now() - parseInt(timestamp)) < 10000) { // Within 10 seconds
+                        // console.log('Detected success via localStorage polling');
+                        window.authPoller.handleLoginSuccess('popup-localStorage-polling');
+                    }
                 }
             }
             catch(e) {
                 // Intentionally ignore cross-origin errors
             }
-        }, 100);
+        }, 500); // Reduced frequency to 500ms for better detection
+
+        // Clean up OAuth state cookie when login is abandoned
+        function clearOAuthState() {
+            // Call server endpoint to clear the HttpOnly oauth_state cookie
+            fetch('/api/clearOAuthState', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log('OAuth state cleared:', data.message);
+            })
+            .catch(error => {
+                // console.warn('Failed to clear OAuth state:', error);
+                // Cookie will still expire after 5 minutes
+            });
+        }
 
         // Direct polling fallback when popup closes without detection
         function startDirectAuthPolling() {
-            let pollCount = 0;
-            const maxPolls = 5; // Poll for 2.5 seconds
-
-            function pollAuthStatus() {
-                fetch('/api/getConfig')
-                    .then(response => response.json())
-                    .then(config => {
-                        window.config = config;
-                        if (config.isLoggedIn && !loginCompleted) {
-                            loginCompleted = true;
-                            // console.log('Login detected via direct polling');
-                            // Reset auth cache timestamp since we just got fresh data
-                            window.authStateTimestamp = Date.now();
-                            displayConnectToSpotifyButton();
-                            return;
-                        }
-
-                        pollCount++;
-                        if (pollCount < maxPolls) {
-                            setTimeout(pollAuthStatus, 500);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Auth polling failed:', error);
-                        pollCount++;
-                        if (pollCount < maxPolls) {
-                            setTimeout(pollAuthStatus, 500);
-                        }
-                    });
-            }
-
-            // Start polling after a brief delay
-            setTimeout(pollAuthStatus, 500);
-        }
-
-        function handleLoginSuccess() {
-            window.clearInterval(pollTimer);
-            window.removeEventListener('storage', storageListener);
-            // Don't delete global callback, other popups might need it
-
-            if (newWindow && !newWindow.closed) {
-                newWindow.close();
-            }
-
-            // Signal successful login to other parts of the app
-            localStorage.setItem('spotify-login-success', Date.now().toString());
-            // localStorage.removeItem('spotify-login-success');
-
-            // Refresh auth state from server
-            refreshAuthState();
-        }
-
-        function refreshAuthState() {
-            // Fetch updated config from server
-            fetch('/api/getConfig')
-                .then(response => response.json())
-                .then(config => {
-                    window.config = config;
-                    window.authStateTimestamp = Date.now();
-                    displayConnectToSpotifyButton();
-                })
-                .catch(error => {
-                    console.error('Error refreshing auth state:', error);
-                    // Fallback: just update local state and refresh UI
-                    window.config.isLoggedIn = true;
-                    window.authStateTimestamp = Date.now();
-                    displayConnectToSpotifyButton();
-                });
+            // console.log('Starting direct auth polling as fallback...');
+            // Delegate to the centralized polling mechanism
+            window.authPoller.start();
         }
     };
 

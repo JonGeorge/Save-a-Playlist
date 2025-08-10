@@ -12,19 +12,25 @@ module.exports = async (req, res) => {
 
         try {
             const cookies = parseCookies(req);
+            // console.log('getConfig - cookies:', Object.keys(cookies));
+            // console.log('getConfig - looking for cookie:', config.jwt.cookieName);
 
             // Make a copy of our JS object so we don't mutate the original config
             const responseConfig = { ...frontendConfig };
 
             // Check for JWT token instead of session
             const token = cookies[config.jwt.cookieName];
+            // console.log('getConfig - token exists:', !!token);
             responseConfig.isLoggedIn = false;
-        
+
             if (token) {
+                // console.log('getConfig - verifying token...');
                 const decoded = auth.jwt.verifyToken(token);
+                // console.log('getConfig - decoded token valid:', !!(decoded && decoded.tokens && decoded.tokens.access_token));
                 responseConfig.isLoggedIn = !!(decoded && decoded.tokens && decoded.tokens.access_token);
             }
 
+            // console.log('getConfig - returning isLoggedIn:', responseConfig.isLoggedIn);
             res.json(responseConfig);
         } catch (error) {
             log.error('Error in getConfig:', error);

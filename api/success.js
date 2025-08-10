@@ -33,26 +33,30 @@ module.exports = async (req, res) => {
     <div class="success-message">✓ Successfully connected to Spotify!</div>
     <div class="closing-message">This window will close automatically...</div>
     <script>
-        // Try to notify parent window and close popup
+        // console.log('Success page loaded - login completed successfully');
+
+        // Since window.opener is null due to OAuth redirects, use alternative methods:
+
+        // Method 1: Set window name for parent to detect
+        window.name = 'spotify-login-success';
+        // console.log('Set window.name to: spotify-login-success');
+
+        // Method 2: Set localStorage flag with current timestamp
         try {
-            if (window.opener && !window.opener.closed) {
-                // Set a flag that parent can check
-                window.name = 'spotify-login-success';
-
-                // Try to call parent function if available
-                if (window.opener.spotifyLoginSuccess) {
-                    window.opener.spotifyLoginSuccess();
-                }
-
-                // Also try to trigger a storage event for cross-tab communication
-                localStorage.setItem('spotify-login-success', Date.now().toString());
-            }
+            const timestamp = Date.now().toString();
+            localStorage.setItem('spotify-login-success', timestamp);
+            localStorage.setItem('spotify-login-timestamp', timestamp);
+            // console.log('Set localStorage flags for login success');
         } catch (e) {
-            console.log('Could not communicate with parent window:', e);
+            console.warn('Could not set localStorage:', e);
         }
 
-        // Close the window after a delay
+        // Method 3: Use document.title as another signal
+        document.title = 'Spotify Login Success - ' + Date.now();
+
+        // Close the window after a longer delay to ensure parent can detect
         setTimeout(function() {
+            // console.log('Closing popup window...');
             window.close();
         }, 700);
     </script>
