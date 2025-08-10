@@ -146,7 +146,7 @@ function displayConnectToSpotifyButton() {
         function startDirectAuthPolling() {
             // console.log('Starting direct auth polling as fallback...');
             // Delegate to the centralized polling mechanism
-            window.authPoller.start();
+            // window.authPoller.start();
         }
     };
 
