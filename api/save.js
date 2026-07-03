@@ -144,7 +144,7 @@ module.exports = async (req, res) => {
             
             log.error('Error in save endpoint:', error.message);
             log.error('Stack trace:', error.stack);
-            res.status(500).json({ status: 500, message: `Internal server error: ${error.message}` });
+            res.status(500).json({ status: 500, message: 'Internal server error' });
         }
     });
 };

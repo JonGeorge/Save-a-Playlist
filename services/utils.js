@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 module.exports = {
     /**
      * Converts a one dimensional Javascript object to query string format.
@@ -25,9 +27,10 @@ module.exports = {
     getRandomString: (length) => {
         let str   = '';
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const bytes = crypto.randomBytes(length);
 
         for (let i = 0; i < length; i++) {
-            str += chars.charAt(Math.floor(Math.random() * chars.length));
+            str += chars.charAt(bytes[i] % chars.length);
         }
         return str;
     },
@@ -56,9 +59,9 @@ module.exports = {
         const cookies = {};
         if (req.headers.cookie) {
             req.headers.cookie.split(';').forEach(cookie => {
-                const parts = cookie.trim().split('=');
-                if (parts.length === 2) {
-                    cookies[parts[0]] = parts[1];
+                const [name, ...rest] = cookie.trim().split('=');
+                if (name && rest.length > 0) {
+                    cookies[name] = rest.join('=');
                 }
             });
         }

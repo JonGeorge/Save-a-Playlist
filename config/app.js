@@ -20,7 +20,6 @@ module.exports = {
     },
 
     jwt: {
-        secret: process.env.JWT_SECRET || 'your-secret-key-change-in-production',
         expiresIn: '1h',
         cookieName: 'auth_token'
     },
