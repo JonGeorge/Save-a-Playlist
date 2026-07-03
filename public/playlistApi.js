@@ -49,7 +49,7 @@ const playlistApi = (function() {
      * @returns Promise containing search results in the response.
      */
     const search = function(query) {
-        return fetch(`/search?q=${query}&typeahead=true`)
+        return fetch(`/search?q=${encodeURIComponent(query)}&typeahead=true`)
             .then(res => res.json())
             .then(data => {
                 // LOG DATA FOR TESTING

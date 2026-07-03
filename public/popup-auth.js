@@ -25,6 +25,9 @@
         };
 
         state.messageListener = function(e) {
+            if (e.origin !== window.location.origin) {
+                return;
+            }
             if (e.data && e.data.type === 'spotify-login-success' && !state.completed) {
                 window.authHandler.handleLoginSuccess();
             }
